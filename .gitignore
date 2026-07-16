@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+dist-ssr
+*.tsbuildinfo
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs & caches
+logs
+*.log
+npm-debug.log*
+.npm
+.eslintcache
+.vite
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.local
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Vercel
+.vercel
