@@ -100,10 +100,10 @@ export default function PartnersMarquee() {
       {/* Marquee Rails with Gradient Edge Fade */}
       <div
         dir="ltr"
-        className="pause-on-hover relative flex flex-col gap-3 sm:gap-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+        className="pause-on-hover relative w-full overflow-hidden flex flex-col gap-3 sm:gap-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
       >
         {/* Track 1: scrolling left */}
-        <div className="animate-marquee flex gap-3 sm:gap-6">
+        <div className="animate-marquee flex w-max gap-3 sm:gap-6 will-change-transform">
           {row1Repeated.map((item, idx) => (
             <div
               key={`row1-${item.id}-${idx}`}
@@ -120,7 +120,7 @@ export default function PartnersMarquee() {
         </div>
 
         {/* Track 2: scrolling right (reverse) */}
-        <div className="animate-marquee-reverse flex gap-3 sm:gap-6">
+        <div className="animate-marquee-reverse flex w-max gap-3 sm:gap-6 will-change-transform">
           {row2Repeated.map((item, idx) => (
             <div
               key={`row2-${item.id}-${idx}`}

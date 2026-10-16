@@ -54,7 +54,19 @@ export default {
         glow: '0 0 40px -10px rgba(94,235,255,0.35)',
         'glow-violet': '0 0 40px -10px rgba(157,124,255,0.35)',
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translate3d(0, 0, 0)' },
+          '100%': { transform: 'translate3d(-50%, 0, 0)' },
+        },
+        'marquee-reverse': {
+          '0%': { transform: 'translate3d(-50%, 0, 0)' },
+          '100%': { transform: 'translate3d(0, 0, 0)' },
+        },
+      },
       animation: {
+        marquee: 'marquee 25s linear infinite',
+        'marquee-reverse': 'marquee-reverse 25s linear infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },

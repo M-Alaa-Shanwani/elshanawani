@@ -122,9 +122,9 @@ export default function ServicesGrid() {
     return () => trigger.kill();
   }, []);
 
-  const row1Repeated = [...ROW_1, ...ROW_1, ...ROW_1];
-  const row2Repeated = [...ROW_2, ...ROW_2, ...ROW_2];
-  const row3Repeated = [...ROW_3, ...ROW_3, ...ROW_3];
+  const row1Repeated = [...ROW_1, ...ROW_1, ...ROW_1, ...ROW_1];
+  const row2Repeated = [...ROW_2, ...ROW_2, ...ROW_2, ...ROW_2];
+  const row3Repeated = [...ROW_3, ...ROW_3, ...ROW_3, ...ROW_3];
 
   return (
     <section id="services" className="relative py-20 sm:py-28 md:py-32 overflow-hidden">
@@ -173,10 +173,10 @@ export default function ServicesGrid() {
       <div className="mt-8 block sm:hidden">
         <div
           dir="ltr"
-          className="pause-on-hover relative flex flex-col gap-2.5 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+          className="pause-on-hover relative w-full overflow-hidden flex flex-col gap-2.5 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
         >
           {/* Row 1: Backend & Cloud (scroll left) */}
-          <div className="animate-marquee flex gap-2.5">
+          <div className="animate-marquee flex w-max gap-2.5 will-change-transform">
             {row1Repeated.map((tool, idx) => (
               <div
                 key={`m-r1-${tool.name}-${idx}`}
@@ -191,7 +191,7 @@ export default function ServicesGrid() {
           </div>
 
           {/* Row 2: Frontend & Design (scroll right) */}
-          <div className="animate-marquee-reverse flex gap-2.5">
+          <div className="animate-marquee-reverse flex w-max gap-2.5 will-change-transform">
             {row2Repeated.map((tool, idx) => (
               <div
                 key={`m-r2-${tool.name}-${idx}`}
@@ -206,7 +206,7 @@ export default function ServicesGrid() {
           </div>
 
           {/* Row 3: QA & Testing (scroll left) */}
-          <div className="animate-marquee flex gap-2.5">
+          <div className="animate-marquee flex w-max gap-2.5 will-change-transform">
             {row3Repeated.map((tool, idx) => (
               <div
                 key={`m-r3-${tool.name}-${idx}`}
