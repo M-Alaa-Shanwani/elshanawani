@@ -65,8 +65,8 @@ export default {
         },
       },
       animation: {
-        marquee: 'marquee 25s linear infinite',
-        'marquee-reverse': 'marquee-reverse 25s linear infinite',
+        marquee: 'marquee 34s linear infinite',
+        'marquee-reverse': 'marquee-reverse 34s linear infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import WorkCard, { type ProjectItem } from './WorkCard';
 import { useTranslation } from '@/i18n';
 
@@ -270,6 +270,8 @@ type CategoryFilter = 'all' | 'web' | 'ecommerce' | 'mobile' | 'ai' | 'uiux';
 export default function WorksSection() {
   const [filter, setFilter] = useState<CategoryFilter>('all');
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
   const { lang } = useTranslation();
   const isAr = lang === 'ar';
 
@@ -287,8 +289,46 @@ export default function WorksSection() {
       ? allProjects
       : allProjects.filter((item) => item.category === filter);
 
+  const scrollToIndex = (index: number) => {
+    if (!sliderRef.current) return;
+    const slides = sliderRef.current.querySelectorAll<HTMLElement>('[data-work-slide]');
+    if (slides[index]) {
+      slides[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      setActiveIndex(index);
+    }
+  };
+
+  const handleScroll = (direction: 'prev' | 'next') => {
+    const nextIdx = direction === 'next' ? activeIndex + 1 : activeIndex - 1;
+    if (nextIdx >= 0 && nextIdx < filteredProjects.length) {
+      scrollToIndex(nextIdx);
+    }
+  };
+
+  const onTrackScroll = () => {
+    if (!sliderRef.current) return;
+    const container = sliderRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const slides = container.querySelectorAll<HTMLElement>('[data-work-slide]');
+    let closestIdx = 0;
+    let minDistance = Infinity;
+
+    slides.forEach((slide, idx) => {
+      const rect = slide.getBoundingClientRect();
+      const distance = isAr
+        ? Math.abs(rect.right - containerRect.right)
+        : Math.abs(rect.left - containerRect.left);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIdx = idx;
+      }
+    });
+
+    setActiveIndex(closestIdx);
+  };
+
   return (
-    <section id="work" className="relative py-20 sm:py-28 md:py-36">
+    <section id="work" className="relative py-20 sm:py-28 md:py-36 overflow-hidden">
       <div className="section-shell">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 pb-6 border-b border-ink-700/60">
@@ -304,33 +344,125 @@ export default function WorksSection() {
             </p>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap self-start md:self-end">
-            {filterTabs.map((tab) => (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 self-start md:self-end">
+            {/* Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+              {filterTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setFilter(tab.id as CategoryFilter);
+                    setActiveIndex(0);
+                    if (sliderRef.current) {
+                      sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className={`rounded-full px-3.5 py-1.5 font-mono text-xs shrink-0 transition-all duration-200 ${
+                    filter === tab.id
+                      ? 'bg-cyan text-ink-950 font-semibold shadow-glow scale-105'
+                      : 'border border-ink-600 bg-ink-900/80 text-text-muted hover:border-cyan/40 hover:text-text'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Quick Header Navigation Arrows */}
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
               <button
-                key={tab.id}
-                onClick={() => setFilter(tab.id as CategoryFilter)}
-                className={`rounded-full px-3.5 py-1.5 font-mono text-xs shrink-0 transition-all duration-200 ${
-                  filter === tab.id
-                    ? 'bg-cyan text-ink-950 font-semibold shadow-glow scale-105'
-                    : 'border border-ink-600 bg-ink-900/80 text-text-muted hover:border-cyan/40 hover:text-text'
-                }`}
+                onClick={() => handleScroll('prev')}
+                disabled={activeIndex === 0}
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                aria-label={isAr ? 'السابق' : 'Previous'}
               >
-                {tab.label}
+                <span className="text-base font-bold">{isAr ? '→' : '←'}</span>
               </button>
+              <button
+                onClick={() => handleScroll('next')}
+                disabled={activeIndex === filteredProjects.length - 1}
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                aria-label={isAr ? 'التالي' : 'Next'}
+              >
+                <span className="text-base font-bold">{isAr ? '←' : '→'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Projects Slider Track */}
+        <div className="relative mt-8 sm:mt-12">
+          {/* Subtle edge fades for luxury slider look */}
+          <div className="pointer-events-none absolute -inset-y-2 start-0 z-10 w-6 sm:w-12 bg-gradient-to-r from-ink-950 to-transparent" />
+          <div className="pointer-events-none absolute -inset-y-2 end-0 z-10 w-6 sm:w-12 bg-gradient-to-l from-ink-950 to-transparent" />
+
+          <div
+            ref={sliderRef}
+            onScroll={onTrackScroll}
+            className="flex gap-5 sm:gap-6 md:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-6 pt-2 px-1"
+          >
+            {filteredProjects.map((project) => (
+              <div
+                key={project.id}
+                data-work-slide
+                className="w-[86vw] xs:w-[360px] sm:w-[410px] md:w-[440px] lg:w-[460px] shrink-0 snap-start transition-transform duration-300"
+              >
+                <WorkCard
+                  project={project}
+                  onOpenDetails={setActiveProject}
+                />
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Projects Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
-        <div className="mt-10 sm:mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 sm:gap-7">
-          {filteredProjects.map((project) => (
-            <WorkCard
-              key={project.id}
-              project={project}
-              onOpenDetails={setActiveProject}
-            />
-          ))}
+        {/* Bottom Navigation & Indicator Bar */}
+        <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-ink-700/60 pt-5">
+          {/* Dot Indicators */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+            {filteredProjects.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToIndex(idx)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  activeIndex === idx
+                    ? 'w-8 bg-cyan shadow-glow'
+                    : 'w-2 bg-ink-600 hover:bg-text-muted'
+                }`}
+                aria-label={`Go to project slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Navigation Arrows & Counter */}
+          <div className="flex items-center gap-3 ms-auto">
+            <span className="font-mono text-xs text-text-dim">
+              <span className="text-cyan font-bold text-sm">
+                {String(activeIndex + 1).padStart(2, '0')}
+              </span>
+              {' / '}
+              {String(filteredProjects.length).padStart(2, '0')}
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleScroll('prev')}
+                disabled={activeIndex === 0}
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                aria-label={isAr ? 'السابق' : 'Previous'}
+              >
+                <span className="text-base font-bold">{isAr ? '→' : '←'}</span>
+              </button>
+              <button
+                onClick={() => handleScroll('next')}
+                disabled={activeIndex === filteredProjects.length - 1}
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                aria-label={isAr ? 'التالي' : 'Next'}
+              >
+                <span className="text-base font-bold">{isAr ? '←' : '→'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
