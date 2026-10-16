@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+﻿import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 
 export type Language = 'en' | 'ar';
 type Dir = 'ltr' | 'rtl';
@@ -9,9 +9,9 @@ const translations = {
   en: {
     // Navbar
     'nav.brand': 'Mohamed',
-    'nav.capabilities': 'Capabilities',
+    'nav.capabilities': 'Tech & Tools',
     'nav.work': 'Work',
-    'nav.stack': 'Stack',
+    'nav.stack': 'Process',
     'nav.contact': 'Contact',
     'nav.cta': 'Hire me',
     'nav.langToggle': 'عربي',
@@ -26,21 +26,26 @@ const translations = {
     'hero.cta_secondary': 'View my work',
     'hero.scroll': 'scroll to explore',
 
-    // Services
-    'services.eyebrow': 'Capabilities',
-    'services.title': 'Four disciplines, one delivery pipeline.',
-    'services.web.title': 'Web Engineering',
-    'services.web.desc':
-      'Full-stack web platforms on .NET and Angular — domain-driven backends, accessible UIs, built to scale past the demo.',
-    'services.mobile.title': 'Mobile',
-    'services.mobile.desc':
-      'Cross-platform apps that feel native, shipped fast without sacrificing performance.',
-    'services.uiux.title': 'UI / UX',
+    // Services & Technologies
+    'services.eyebrow': 'Technologies & Tools',
+    'services.title': 'Full-Cycle Tech Stack & Delivery Pipeline.',
+    'services.subtitle': 'Modern technologies, robust architectures, seamless integrations, and end-to-end quality assurance.',
+    'services.all': 'All Tools',
+    'services.backend.title': 'Backend & Architecture',
+    'services.backend.desc':
+      'Robust and secure backend infrastructure built on .NET, DDD, and scalable databases.',
+    'services.frontend.title': 'Frontend & Web Apps',
+    'services.frontend.desc':
+      'Interactive, high-performance, and responsive user interfaces delivering smooth browsing across all screens.',
+    'services.uiux.title': 'UI / UX Design',
     'services.uiux.desc':
-      'Interfaces designed from real user flows, not templates — wireframe to pixel-perfect handoff.',
-    'services.qa.title': 'QA / QC',
+      'Interfaces designed from real user flows — wireframe to pixel-perfect design system handoff.',
+    'services.integrations.title': 'Integrations & Cloud',
+    'services.integrations.desc':
+      'Scalable APIs, payment gateways, event-driven webhooks, and secure cloud microservices.',
+    'services.qa.title': 'QA, Testing & DevOps',
     'services.qa.desc':
-      'Automated and manual test coverage embedded from sprint one — regressions caught before they ship.',
+      'Automated and manual test coverage with CI/CD pipelines embedded from sprint one.',
 
     // Work
     'work.eyebrow': 'Selected work',
@@ -50,17 +55,18 @@ const translations = {
     'work.scrollLeft': 'Scroll left',
     'work.scrollRight': 'Scroll right',
 
-    // TechStack
-    'stack.eyebrow': 'The stack',
-    'stack.title': 'The technologies I work with daily.',
-    'stack.client': 'Client',
-    'stack.client.detail': 'Presentation layer',
-    'stack.app': 'Application',
-    'stack.app.detail': 'Domain & API layer',
-    'stack.data': 'Data',
-    'stack.data.detail': 'Persistence layer',
-    'stack.infra': 'Infrastructure',
-    'stack.infra.detail': 'Delivery & ops layer',
+    // Process & Workflow
+    'process.eyebrow': 'How I Deliver',
+    'process.title': 'From Concept to Production-Grade Software.',
+    'process.subtitle': 'A structured, engineering-first approach that ensures rock-solid architecture, pixel-perfect UX, and rapid execution.',
+    'process.step1.title': 'Architecture & Planning',
+    'process.step1.desc': 'In-depth requirements discovery, database schema design, and Clean Architecture / DDD modeling before touching code.',
+    'process.step2.title': 'UI/UX & Prototyping',
+    'process.step2.desc': 'Modern, high-fidelity Figma prototypes and design systems tailored to real user journeys and business conversion.',
+    'process.step3.title': 'Clean Code & Integrations',
+    'process.step3.desc': 'Production-ready full-stack implementation with SOLID principles, robust APIs, and seamless third-party integrations.',
+    'process.step4.title': 'QA, CI/CD & Deployment',
+    'process.step4.desc': 'Automated testing suites, CI/CD pipelines, performance optimization, and smooth zero-downtime cloud deployment.',
 
     // CTA
     'cta.eyebrow': "Let's work together",
@@ -78,9 +84,9 @@ const translations = {
   ar: {
     // Navbar
     'nav.brand': 'محمد',
-    'nav.capabilities': 'الخدمات',
+    'nav.capabilities': 'التقنيات والأدوات',
     'nav.work': 'أعمالي',
-    'nav.stack': 'التقنيات',
+    'nav.stack': 'منهجية العمل',
     'nav.contact': 'تواصل',
     'nav.cta': 'وظّفني',
     'nav.langToggle': 'EN',
@@ -95,21 +101,26 @@ const translations = {
     'hero.cta_secondary': 'شوف أعمالي',
     'hero.scroll': 'اسحب لأسفل',
 
-    // Services
-    'services.eyebrow': 'الخدمات',
-    'services.title': 'أربع تخصصات، خط إنتاج واحد.',
-    'services.web.title': 'تطوير الويب',
-    'services.web.desc':
-      'منصات ويب متكاملة على .NET و Angular — باك إند مبني على Domain-Driven Design وواجهات سهلة الوصول.',
-    'services.mobile.title': 'الموبايل',
-    'services.mobile.desc':
-      'تطبيقات Cross-platform بإحساس تطبيقات أصلية، سريعة التسليم بدون التنازل عن الأداء.',
-    'services.uiux.title': 'UI / UX',
+    // Services & Technologies
+    'services.eyebrow': 'التقنيات والأدوات',
+    'services.title': 'منظومة تقنية متكاملة، وخط إنتاج برمجي شامل.',
+    'services.subtitle': 'أحدث الأدوات والتقنيات لتغطية معمارية الأنظمة، واجهات المستخدم، التكاملات والربط، وضمان الجودة.',
+    'services.all': 'كل الأدوات',
+    'services.backend.title': 'الأنظمة الخلفية والمعمارية (Backend)',
+    'services.backend.desc':
+      'بنية تحتية برمجية قوية وآمنة مبنية على .NET ومعمارية Domain-Driven Design وقواعد بيانات متقدمة.',
+    'services.frontend.title': 'الواجهات الأمامية وتطبيقات الويب (Frontend)',
+    'services.frontend.desc':
+      'واجهات مستخدم تفاعلية، سريعة، ومتجاوبة بالكامل، تضمن تجربة تصفح سلسة وممتعة عبر جميع الشاشات.',
+    'services.uiux.title': 'تصميم واجهات وتجربة المستخدم (UI/UX)',
     'services.uiux.desc':
-      'واجهات مصممة من تدفقات المستخدم الحقيقية، مش من قوالب — من الـ Wireframe للتسليم.',
-    'services.qa.title': 'ضمان الجودة',
+      'واجهات مصممة من تدفقات المستخدم الحقيقية، مش من قوالب — من الـ Wireframe للتسليم الاحترافي.',
+    'services.integrations.title': 'التكاملات والربط السحابي (Integrations)',
+    'services.integrations.desc':
+      'ربط واجهات الـ APIs، بوابات الدفع الإلكتروني، خوادم السحاب، والمعمارية المعتمدة على الأحداث Webhooks.',
+    'services.qa.title': 'ضمان الجودة والأتمتة (QA & DevOps)',
     'services.qa.desc':
-      'تغطية اختبارية آلية ويدوية من أول سبرنت — الأخطاء تتكشف قبل ما توصل للمستخدم.',
+      'تغطية اختبارية آلية ويدوية مع خطوط إمداد CI/CD من أول سبرنت — الأخطاء تتكشف قبل ما توصل للمستخدم.',
 
     // Work
     'work.eyebrow': 'أعمال مختارة',
@@ -119,17 +130,18 @@ const translations = {
     'work.scrollLeft': 'اسحب لليسار',
     'work.scrollRight': 'اسحب لليمين',
 
-    // TechStack
-    'stack.eyebrow': 'التقنيات',
-    'stack.title': 'التقنيات اللي بشتغل بيها يوميًا.',
-    'stack.client': 'العميل',
-    'stack.client.detail': 'طبقة العرض',
-    'stack.app': 'التطبيق',
-    'stack.app.detail': 'طبقة API والمنطق',
-    'stack.data': 'البيانات',
-    'stack.data.detail': 'طبقة التخزين',
-    'stack.infra': 'البنية التحتية',
-    'stack.infra.detail': 'طبقة التشغيل والنشر',
+    // Process & Workflow
+    'process.eyebrow': 'منهجية العمل',
+    'process.title': 'من الفكرة إلى منتج برمجي قوي في بيئة الإنتاج.',
+    'process.subtitle': 'خطوات هندسية متكاملة تضمن أعلى معايير الجودة، سرعة الإطلاق، واستقرار النظام على المدى الطويل.',
+    'process.step1.title': 'المعمارية والتخطيط الهندسي',
+    'process.step1.desc': 'تحليل المتطلبات بدقة، وتصميم المخططات وقواعد البيانات، واختيار الأنماط المعمارية (Clean Architecture & DDD) قبل كتابة الكود.',
+    'process.step2.title': 'تصميم واجهات وتجربة المستخدم',
+    'process.step2.desc': 'تحويل الرؤية إلى نماذج تفاعلية وتصميمات عصرية على Figma مع بناء نظام تصميم (Design System) مخصص ودقيق.',
+    'process.step3.title': 'التطوير النظيف والتكاملات',
+    'process.step3.desc': 'بناء الأنظمة بمبادئ SOLID و Clean Code مع تطوير الـ Backend والـ Frontend، وربط بوابات الدفع وواجهات الـ APIs الخارجية.',
+    'process.step4.title': 'الأتمتة وضمان الجودة والنشر',
+    'process.step4.desc': 'تغطية الاختبارات الآلية، وإعداد خطوط الإمداد المستمر CI/CD، وضبط الأمان والسيرفرات السحابية لإطلاق آمن ومستقر.',
 
     // CTA
     'cta.eyebrow': 'يلا نشتغل سوا',

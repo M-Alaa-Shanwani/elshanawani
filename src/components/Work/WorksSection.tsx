@@ -1,218 +1,440 @@
-import { useEffect, useRef } from 'react';
-import WorkCard, { type WorkItem } from './WorkCard';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { useState } from 'react';
+import WorkCard, { type ProjectItem } from './WorkCard';
 import { useTranslation } from '@/i18n';
 
-const works: WorkItem[] = [
+const allProjects: ProjectItem[] = [
   {
-    image:
-      'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Hospitality dashboard showing revenue and occupancy analytics',
-    title: 'Coastline Analytics — hospitality revenue intelligence',
-    role: 'Product design & frontend',
-    description:
-      'A live analytics suite for coastal hotels and resorts, tracking occupancy, ADR, RevPAR, and cross-property scorecards with built-in forecasting and team alerts.',
-    tags: ['React', 'TypeScript', 'Chart.js', 'Tailwind', 'REST API'],
+    id: 'synitera-saas',
+    category: 'web',
+    image: '/work/synitera-saas.jpg',
+    badge: { ar: 'منصة سحابية SaaS', en: 'Enterprise SaaS' },
+    title: {
+      ar: 'منصة سينيتيرا — إدارة الشركات والميكروسيرفس',
+      en: 'Synitera — Cloud Operations & Multi-Tenant Portal',
+    },
+    desc: {
+      ar: 'بوابة إدارة سحابية متعددة المستأجرين مبنية بـ Domain-Driven Design على ABP.io لمتابعة صحة السيرفرات ومقاييس الأداء.',
+      en: 'Multi-tenant enterprise management portal engineered on ABP.io with Domain-Driven Design, server telemetry, and RBAC.',
+    },
+    metric: { ar: '🛡️ استقرار بنسبة 99.98%', en: '🛡️ 99.98% High Availability' },
+    tags: ['ABP.io', 'ASP.NET Core', 'Angular', 'Redis', 'Kubernetes'],
+    details: {
+      ar: {
+        role: 'هندسة الأنظمة والباك إند المتقدم (Backend Lead & Architecture)',
+        highlight: 'معمارية موزعة عالية الاعتمادية مع معالجة أكثر من 14 مليون طلب شهرياً بأقل من 40ms زمن استجابة.',
+      },
+      en: {
+        role: 'Backend Lead & Cloud Architecture',
+        highlight: 'Distributed microservices architecture serving 14M+ monthly requests with sub-40ms response latency.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Mobile health app showing appointment scheduling and patient data',
-    title: 'Nova Health — patient intake mobile experience',
-    role: 'Mobile product & UX',
-    description:
-      'A patient-first intake app for clinics and telehealth teams, with secure records, dynamic symptom triage, and in-app appointment booking for fast, modern care.',
-    tags: ['React Native', 'Expo', 'Figma', 'Firebase', 'HIPAA'],
+    id: 'hathout-cafe',
+    category: 'web',
+    image: '/work/hathout-cafe.jpg',
+    badge: { ar: 'منصة ويب & POS', en: 'Web Platform & POS' },
+    title: {
+      ar: 'نظام حتحوت كافيه — إدارة المطاعم والمبيعات السحابية',
+      en: 'Hathout Cafe — Cloud POS & Restaurant Management',
+    },
+    desc: {
+      ar: 'منصة سحابية متكاملة لإدارة سلسلة المقاهي ونقاط البيع، مع ربط مباشر بين الكاشير والمطبخ مع لوحة تحكم ذكية للإيرادات.',
+      en: 'Cloud platform for restaurant operations, live kitchen dispatch, and digital table reservations with live revenue analytics.',
+    },
+    metric: { ar: '⚡ معالجة طلبات < 200ms', en: '⚡ Sub-200ms Order Processing' },
+    tags: ['.NET Core 8', 'Angular 17', 'PostgreSQL', 'SignalR', 'Docker'],
+    details: {
+      ar: {
+        role: 'تصميم وبناء كامل (Full-Stack Architecture & Development)',
+        highlight: 'أتمتة دورة الطلبات بنسبة 95% والربط المباشر مع أجهزة الطباعة الحرارية والموازين، ونظام تقارير محاسبية تفاعلي.',
+      },
+      en: {
+        role: 'Full-Stack Architecture & Development',
+        highlight: 'Automated 95% of order lifecycles with thermal printer telemetry and real-time revenue analytics dashboard.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Corporate finance portal with charts and cash-flow metrics',
-    title: 'Atlas Finance — treasury & cashflow portal',
-    role: 'Full-stack product delivery',
-    description:
-      'A treasury management portal for mid-market finance teams, featuring cash forecasting, bank connectivity, approvals, and compliance workflows in a single secure dashboard.',
-    tags: ['Next.js', 'Node.js', 'PostgreSQL', 'OAuth', 'Kubernetes'],
+    id: 'nabdh-health',
+    category: 'mobile',
+    image: '/work/nabdh-health.jpg',
+    badge: { ar: 'تطبيق موبايل طبي', en: 'Mobile App · Health' },
+    title: {
+      ar: 'تطبيق نبض الطبي — استشارات وحجوزات طبية فورية',
+      en: 'Nabdh — Telehealth & Smart Clinic Mobile App',
+    },
+    desc: {
+      ar: 'تطبيق رعاية صحية متطور يربط المرضى بالأطباء الاستشاريين عبر مكالمات فيديو مشفرة، مع حجز المواعيد وملف صحي ذكي.',
+      en: 'Patient-first mobile healthcare solution featuring encrypted WebRTC video consultations, clinic booking, and tracking.',
+    },
+    metric: { ar: '📱 +50,000 مستخدم نشط', en: '📱 +50k Active Patients' },
+    tags: ['React Native', 'Node.js', 'WebRTC', 'Firebase', 'TypeScript'],
+    details: {
+      ar: {
+        role: 'تطوير تطبيق الموبايل والواجهات (Mobile App & UX)',
+        highlight: 'تجربة مستخدم حاصلة على تقييم 4.9 في المتاجر مع مكالمات فيديو فائقة الاستقرار حتى في الشبكات الضعيفة.',
+      },
+      en: {
+        role: 'Mobile App & UX Engineering',
+        highlight: 'Maintained 4.9-star store rating with crystal-clear latency-optimized video feeds across diverse mobile networks.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Omnichannel retail operations interface with product inventory views',
-    title: 'Aether Retail — omnichannel commerce platform',
-    role: 'Platform engineering',
-    description:
-      'A unified operations dashboard for retail teams to manage inventory, POS, online orders and fulfillment across stores and marketplaces.',
-    tags: ['Vue', 'Shopify', 'GraphQL', 'Microservices', 'PWA'],
+    id: 'madar-logistics',
+    category: 'web',
+    image: '/work/madar-logistics.jpg',
+    badge: { ar: 'منصة لوجستية & أسطول', en: 'Logistics & Fleet SaaS' },
+    title: {
+      ar: 'مدار للشحن — تتبع الشحنات والأسطول اللحظي',
+      en: 'Madar Logistics — Live Fleet Dispatch & Telemetry',
+    },
+    desc: {
+      ar: 'لوحة تحكم تشغيلية لشركات الشحن والخدمات اللوجستية، تتيح تعقب مسارات السائقين لحظياً وتحسين استهلاك الوقود وخفض التكاليف.',
+      en: 'High-throughput logistics dispatching console tracking fleet GPS coordinates in real-time with route optimization engines.',
+    },
+    metric: { ar: '📍 تتبع 10,000 مركبة لحظياً', en: '📍 10k Active Fleet Units' },
+    tags: ['React 18', 'NestJS', 'Leaflet', 'RabbitMQ', 'PostgreSQL'],
+    details: {
+      ar: {
+        role: 'تطوير الواجهة الأمامية والخرائط التفاعلية (Frontend & Geospatial)',
+        highlight: 'خرائط تفاعلية سلسة تدعم آلاف النقاط المتزامنة وتحديث فوري للمسارات عبر WebSockets.',
+      },
+      en: {
+        role: 'Frontend & Geospatial Engineering',
+        highlight: 'Engineered silky-smooth cluster rendering for thousands of moving vehicles using optimized WebSockets pipelines.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Solar energy monitoring dashboard with performance metrics',
-    title: 'GreenGrid — renewable asset monitoring',
-    role: 'Data platform & UX',
-    description:
-      'A monitoring platform for solar farms that visualizes live output, device health, and maintenance schedules using telemetry from distributed inverters.',
-    tags: ['Svelte', 'AWS', 'IoT', 'DataViz', 'Tailwind'],
+    id: 'finedge-portal',
+    category: 'web',
+    image: '/work/aim-ai.jpg',
+    badge: { ar: 'بوابة مالية B2B', en: 'B2B Fintech Portal' },
+    title: {
+      ar: 'فاين إيدج — بوابة الفواتير والتحصيلات البنكية',
+      en: 'FinEdge — Enterprise Billing & Settlement Engine',
+    },
+    desc: {
+      ar: 'منصة تسوية مالية تربط بين بوابات الدفع الإلكتروني وحسابات البنوك، مع إصدار الفواتير الضريبية وتوليد التقارير المالية بدقة.',
+      en: 'Automated settlement engine bridging commercial payment gateways with enterprise bank ledgers and VAT e-invoicing.',
+    },
+    metric: { ar: '💳 معالجة +$8M معاملات شهرياً', en: '💳 $8M+ Monthly Volume' },
+    tags: ['.NET 8', 'Angular', 'SQL Server', 'Stripe', 'Docker'],
+    details: {
+      ar: {
+        role: 'أمان البيانات والامتثال المالي (Fintech Security & Core API)',
+        highlight: 'بناء محرك معاملات متوافق مع معايير PCI-DSS مع حماية فائقة ضد ازدواجية الخصم.',
+      },
+      en: {
+        role: 'Fintech Security & Core API',
+        highlight: 'Architected idempotent transactional pipeline meeting strict PCI-DSS audit requirements without transaction drift.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Fleet tracking dashboard with route maps and vehicle status',
-    title: 'PulseFleet — delivery operations command center',
-    role: 'UX strategy & frontend',
-    description:
-      'A dispatch and fleet visibility solution for logistics teams, with live route tracking, ETA optimization, and driver performance analytics.',
-    tags: ['React', 'Mapbox', 'Node.js', 'PostgreSQL', 'Realtime'],
+    id: 'aim-ai',
+    category: 'ai',
+    image: '/work/aim-ai.jpg',
+    badge: { ar: 'منصة ذكاء اصطناعي', en: 'Enterprise AI & Automation' },
+    title: {
+      ar: 'منصة aim.ai — أتمتة العمليات والحلول الذكية',
+      en: 'aim.ai — Neural Workflow & Operations Automation',
+    },
+    desc: {
+      ar: 'منصة مؤسسية لأتمتة سير العمل وربط النماذج الذكية التوليدية لتحليل البيانات الضخمة واتخاذ القرارات التجارية اللحظية.',
+      en: 'Enterprise AI orchestration platform integrating LLMs for automated pipeline extraction and real-time operational decisions.',
+    },
+    metric: { ar: '🤖 أتمتة مهام بنسبة 80%', en: '🤖 80% Automated Ops' },
+    tags: ['Python', 'FastAPI', 'React', 'OpenAI API', 'LangChain'],
+    details: {
+      ar: {
+        role: 'هندسة خطوط النماذج والذكاء الاصطناعي (AI Lead Engineer)',
+        highlight: 'تقليص زمن معالجة المستندات المؤسسية بنسبة 80% باستخدام خطوط معالجة لغوية ذكية متزامنة.',
+      },
+      en: {
+        role: 'AI Lead Engineer',
+        highlight: 'Reduced enterprise document processing turnaround by 80% with resilient asynchronous LLM extraction chains.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Sales pipeline dashboard for B2B customer relationship management',
-    title: 'Orchid CRM — B2B pipeline intelligence',
-    role: 'CRM product and integrations',
-    description:
-      'A CRM built for specialist sales teams, with deal scoring, automated touchpoints, and custom account hierarchies that mirror complex B2B relationships.',
-    tags: ['React', 'Python', 'Salesforce', 'Zapier', 'API'],
+    id: 'maxstore',
+    category: 'ecommerce',
+    image: '/work/maxstore.jpg',
+    badge: { ar: 'متجر تجارة إلكترونية', en: 'E-Commerce Store' },
+    title: {
+      ar: 'متجر maxStore — منصة تجارة إلكترونية عصرية',
+      en: 'maxStore — High-Performance E-Commerce Platform',
+    },
+    desc: {
+      ar: 'منصة تسوق متكاملة للأزياء الراقية، توفر تجربة مستخدم سلسة مع سلة مشتريات ديناميكية، قسائم خصم تفاعلية، وتتبع شحنات متكامل.',
+      en: 'Modern boutique shopping experience with instant cart state, interactive coupon engine, and seamless multi-channel checkout.',
+    },
+    metric: { ar: '🛍️ تجربة شراء فورية', en: '🛍️ Sub-second Checkout' },
+    tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive UI', 'LocalStorage'],
+    details: {
+      ar: {
+        role: 'تطوير وتصميم واجهة المتجر (Frontend & Interaction Design)',
+        highlight: 'كود نظيف تماماً وخفيف وبدون اعتمادات خارجية ثقيلة، لضمان تحميل فوري وتجربة شرائية استثنائية.',
+      },
+      en: {
+        role: 'Frontend & Interaction Design',
+        highlight: 'Lightweight zero-dependency architecture ensuring sub-second initial page render and instant cart responsiveness.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Home automation dashboard showing room controls and device status',
-    title: 'Rover Home — smart home control console',
-    role: 'IoT UX & integration',
-    description:
-      'A control console for connected homes that brings lighting, climate, security, and media into one elegant interface with voice assistant support.',
-    tags: ['React', 'MQTT', 'Smart Home', 'WebSockets', 'UI Design'],
+    id: 'pegasus-store',
+    category: 'ecommerce',
+    image: '/work/pegasus-store.jpg',
+    badge: { ar: 'متجر ساعات وسلع فاخرة', en: 'Luxury Goods Store' },
+    title: {
+      ar: 'متجر ساعات Pegasus — منصة بيع الساعات الفاخرة',
+      en: 'Pegasus Watches — Luxury Timepiece E-Commerce',
+    },
+    desc: {
+      ar: 'متجر رقمي متخصص في الساعات الكلاسيكية والرياضية الفاخرة، يبرز تفاصيل الحركات الميكانيكية وتجربة شراء استثنائية.',
+      en: 'Bespoke horology boutique engineered with high-precision micro-interactions celebrating mechanical timepiece craftsmanship.',
+    },
+    metric: { ar: '⭐ تقييم 4.9 للمتجر', en: '⭐ 4.9 Store Rating' },
+    tags: ['JavaScript', 'Modern CSS', 'E-Commerce', 'UI/UX'],
+    details: {
+      ar: {
+        role: 'تصميم تجربة العميل والواجهات (UI/UX & Storefront)',
+        highlight: 'واجهات داكنة فاخرة تعكس قيمة المنتجات الحصرية مع تدفق شراء مبسط بدون تعقيد.',
+      },
+      en: {
+        role: 'UI/UX & Storefront Engineering',
+        highlight: 'Crafted ultra-refined dark luxury aesthetics highlighting timepiece finishing and smooth micro-interactions.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Creative production planner with scheduling and tasks',
-    title: 'Muse Studio — creative production planner',
-    role: 'Product design & implementation',
-    description:
-      'A planning tool for creative agencies to run briefs, timelines, asset approvals and resource planning across studios, clients and campaigns.',
-    tags: ['Figma', 'React', 'Prisma', 'Tailwind', 'Notion Sync'],
+    id: 'arooma-uiux',
+    category: 'uiux',
+    image: '/work/docs-al7osam.jpg',
+    badge: { ar: 'تصميم منتج UI/UX', en: 'UI/UX Design System' },
+    title: {
+      ar: 'نظام أرومة — تجربة بحث وحجز عقاري متطورة',
+      en: 'Arooma — PropTech Booking Flow & Design System',
+    },
+    desc: {
+      ar: 'نظام تصميم متكامل (Design System) لمنصة عقارية ذكية مع تدفقات حجز ثلاثية الأبعاد ونماذج تفاعلية شاملة لكافة الحالات.',
+      en: 'Comprehensive design system and micro-interaction library for modern real-estate search, 3D property tours, and checkout.',
+    },
+    metric: { ar: '🎨 +120 شاشة ومكون تفاعلي', en: '🎨 120+ Components & Screens' },
+    tags: ['Figma', 'UI/UX Design', 'Design Systems', 'Prototyping', 'User Research'],
+    details: {
+      ar: {
+        role: 'أبحاث وتصميم تجربة المستخدم (Lead Product Designer)',
+        highlight: 'رفع معدل إتمام الحجوزات بنسبة 40% من خلال تبسيط تدفق المستخدم وتوحيد هوية التصميم في كافة الشاشات.',
+      },
+      en: {
+        role: 'Lead Product Designer',
+        highlight: 'Increased booking completion by 40% via simplified checkout funnels and cohesive design tokens.',
+      },
+    },
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
-    imageAlt: 'Legal compliance dashboard with task workflows and status cards',
-    title: 'Beacon Legal — compliance workflow platform',
-    role: 'Enterprise SaaS delivery',
-    description:
-      'A workflow platform for legal teams managing risk, audits and policy approvals with document metadata, reminders, and evidence logging.',
-    tags: ['Angular', 'Azure', 'Microfrontend', 'Security', 'Workflow'],
+    id: 'docs-al7osam',
+    category: 'web',
+    image: '/work/docs-al7osam.jpg',
+    badge: { ar: 'بوابة توثيق ومعمارية', en: 'Engineering Docs Portal' },
+    title: {
+      ar: 'بوابة توثيق الحسام — معمارية الأنظمة والمكتبات البرمجية',
+      en: 'Al-Hosam Portal — Engineering Blueprints & SDK Docs',
+    },
+    desc: {
+      ar: 'بوابة متكاملة لتوثيق معمارية المشاريع البرمجية وقواعد البيانات مع أمثلة حية لمكتبات الـ API والمخططات الهندسية التفاعلية.',
+      en: 'Centralized developer portal documenting microservices architecture, database schemas, and live interactive API specs.',
+    },
+    metric: { ar: '📚 توثيق 100% للمنظومة', en: '📚 100% Architecture Coverage' },
+    tags: ['React', 'TypeScript', 'Tailwind CSS', 'OpenAPI', 'Markdown'],
+    details: {
+      ar: {
+        role: 'هندسة التوثيق والمعمارية (Lead Documentation Architect)',
+        highlight: 'توحيد المراجع البرمجية وتقليص زمن تدريب المهندسين الجدد بنسبة 60% بفضل التوثيق المنهجي المتكامل.',
+      },
+      en: {
+        role: 'Lead Documentation Architect',
+        highlight: 'Streamlined developer onboarding by 60% through standardized schema specifications and architecture blueprints.',
+      },
+    },
   },
 ];
 
+type CategoryFilter = 'all' | 'web' | 'ecommerce' | 'mobile' | 'ai' | 'uiux';
+
 export default function WorksSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const isHovered = useRef(false);
-  const { t } = useTranslation();
+  const [filter, setFilter] = useState<CategoryFilter>('all');
+  const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
+  const { lang } = useTranslation();
+  const isAr = lang === 'ar';
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const cards = sectionRef.current.querySelectorAll('[data-work-card]');
-    const trigger = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top 80%',
-      once: true,
-      onEnter: () => {
-        gsap.fromTo(
-          cards,
-          { y: 28, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, stagger: 0.08, ease: 'power3.out' }
-        );
-      },
-    });
-    return () => trigger.kill();
-  }, []);
+  const filterTabs = [
+    { id: 'all', label: isAr ? 'الكل' : 'All' },
+    { id: 'web', label: isAr ? 'منصات سحابية & SaaS' : 'Cloud & SaaS' },
+    { id: 'ecommerce', label: isAr ? 'متاجر رقمية' : 'E-Commerce' },
+    { id: 'mobile', label: isAr ? 'تطبيقات موبايل' : 'Mobile Apps' },
+    { id: 'ai', label: isAr ? 'ذكاء اصطناعي' : 'AI Systems' },
+    { id: 'uiux', label: isAr ? 'تصميم UI/UX' : 'UI/UX Design' },
+  ];
 
-  // Autoplay carousel on all screen sizes
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (isHovered.current || !sliderRef.current) return;
-
-      const el = sliderRef.current;
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (el.scrollLeft >= maxScroll - 10) {
-        el.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        const firstCard = el.querySelector('[data-work-card]');
-        const scrollAmount = firstCard ? firstCard.clientWidth + 12 : el.clientWidth * 0.2;
-        el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      }
-    }, 2000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (!sliderRef.current) return;
-    const firstCard = sliderRef.current.querySelector('[data-work-card]');
-    const step = firstCard ? firstCard.clientWidth + 12 : Math.round(sliderRef.current.clientWidth * 0.75);
-    sliderRef.current.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
-  };
+  const filteredProjects =
+    filter === 'all'
+      ? allProjects
+      : allProjects.filter((item) => item.category === filter);
 
   return (
-    <section id="work" ref={sectionRef} className="relative py-16 sm:py-24 md:py-36">
+    <section id="work" className="relative py-20 sm:py-28 md:py-36">
       <div className="section-shell">
-        <p className="eyebrow">{t('work.eyebrow')}</p>
-        <div className="mt-3 flex flex-col gap-4 sm:mt-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="min-w-0">
-            <h2 className="max-w-xl text-2xl font-semibold text-text sm:text-3xl md:text-4xl">
-              {t('work.title')}
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 pb-6 border-b border-ink-700/60">
+          <div>
+            <p className="eyebrow">{isAr ? 'أعمال مختارة' : 'Selected Work'}</p>
+            <h2 className="mt-3 max-w-2xl text-2xl font-bold tracking-tight text-text sm:mt-4 sm:text-3xl md:text-5xl">
+              {isAr ? 'مشاريع حقيقية، نتائج ملموسة.' : 'Real Projects, Measurable Results.'}
             </h2>
-            <p className="mt-3 max-w-xl text-sm text-text-muted sm:mt-4 sm:text-base">
-              {t('work.subtitle')}
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-muted sm:text-base">
+              {isAr
+                ? 'مجموعة من أحدث الأنظمة والمنصات والتطبيقات التي قمت بتطويرها وتصميمها بأعلى معايير الجودة والأداء والهندسة البرمجية.'
+                : 'A curated selection of platforms, mobile apps, and systems I engineered with production-grade precision and modern aesthetics.'}
             </p>
           </div>
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <button
-              type="button"
-              aria-label={t('work.scrollLeft')}
-              onClick={() => scroll('left')}
-              className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-950/70 text-xl text-text transition hover:border-cyan hover:text-cyan sm:h-11 sm:w-11"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              aria-label={t('work.scrollRight')}
-              onClick={() => scroll('right')}
-              className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-950/70 text-xl text-text transition hover:border-cyan hover:text-cyan sm:h-11 sm:w-11"
-            >
-              ›
-            </button>
+
+          {/* Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap self-start md:self-end">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilter(tab.id as CategoryFilter)}
+                className={`rounded-full px-3.5 py-1.5 font-mono text-xs shrink-0 transition-all duration-200 ${
+                  filter === tab.id
+                    ? 'bg-cyan text-ink-950 font-semibold shadow-glow scale-105'
+                    : 'border border-ink-600 bg-ink-900/80 text-text-muted hover:border-cyan/40 hover:text-text'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="mt-8 overflow-hidden text-left sm:mt-10" dir="ltr">
+        {/* Projects Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
+        <div className="mt-10 sm:mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 sm:gap-7">
+          {filteredProjects.map((project) => (
+            <WorkCard
+              key={project.id}
+              project={project}
+              onOpenDetails={setActiveProject}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Details Modal */}
+      {activeProject && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
+          onClick={() => setActiveProject(null)}
+        >
           <div
-            ref={sliderRef}
-            onMouseEnter={() => { isHovered.current = true; }}
-            onMouseLeave={() => { isHovered.current = false; }}
-            onTouchStart={() => { isHovered.current = true; }}
-            onTouchEnd={() => { isHovered.current = false; }}
-            className="flex gap-3 overflow-x-auto pb-6 pr-2 scroll-smooth snap-x snap-mandatory touch-pan-x work-carousel"
-            aria-label="Selected work carousel"
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-ink-600 bg-ink-900 p-5 sm:p-8 shadow-2xl text-text"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex gap-3">
-              {works.map((item) => (
-                <div
-                  data-work-card
-                  key={item.title}
-                  className="w-[200px] flex-shrink-0 snap-start sm:w-[220px] md:w-[240px]"
-                >
-                  <WorkCard item={item} />
-                </div>
-              ))}
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveProject(null)}
+              className="absolute top-4 end-4 sm:top-5 sm:end-5 flex h-9 w-9 items-center justify-center rounded-full border border-ink-600 bg-ink-800 text-text-muted transition-colors hover:border-cyan hover:text-cyan"
+              aria-label={isAr ? 'إغلاق' : 'Close'}
+            >
+              ✕
+            </button>
+
+            {/* Modal Image */}
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-ink-700 bg-ink-950">
+              <img
+                src={activeProject.image}
+                alt={isAr ? activeProject.title.ar : activeProject.title.en}
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+
+            {/* Modal Header */}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <span className="rounded-full border border-cyan/40 bg-ink-950/80 px-3 py-1 font-mono text-xs text-cyan">
+                {isAr ? activeProject.badge.ar : activeProject.badge.en}
+              </span>
+              <span className="rounded-lg border border-white/10 bg-ink-800 px-3 py-1 text-xs text-text">
+                {isAr ? activeProject.metric.ar : activeProject.metric.en}
+              </span>
+            </div>
+
+            <h3 className="mt-4 text-xl font-bold sm:text-2xl text-text">
+              {isAr ? activeProject.title.ar : activeProject.title.en}
+            </h3>
+
+            <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">
+              {isAr ? activeProject.desc.ar : activeProject.desc.en}
+            </p>
+
+            {/* Role & Highlights */}
+            {activeProject.details && (
+              <div className="mt-6 rounded-2xl border border-ink-700/80 bg-ink-950/60 p-4 sm:p-5">
+                <h4 className="font-mono text-xs text-cyan uppercase tracking-wider">
+                  {isAr ? 'الدور والمسؤوليات' : 'Role & Key Contributions'}
+                </h4>
+                <p className="mt-1 text-sm font-semibold text-text">
+                  {isAr
+                    ? activeProject.details.ar.role
+                    : activeProject.details.en.role}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-text-muted sm:text-sm">
+                  {isAr
+                    ? activeProject.details.ar.highlight
+                    : activeProject.details.en.highlight}
+                </p>
+              </div>
+            )}
+
+            {/* Tech Tags */}
+            <div className="mt-6">
+              <h4 className="font-mono text-xs text-text-dim uppercase tracking-wider mb-2">
+                {isAr ? 'التقنيات المستخدمة' : 'Technologies Used'}
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {activeProject.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-lg border border-ink-600 bg-ink-800 px-3 py-1 font-mono text-xs text-text-muted"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="mt-8 flex flex-wrap gap-4 border-t border-ink-700/60 pt-6">
+              <a
+                href="#contact"
+                onClick={() => setActiveProject(null)}
+                className="btn-primary justify-center text-sm"
+              >
+                {isAr ? 'اطلب مشروعاً مماثلاً' : 'Request Similar Project'}
+              </a>
+              <button
+                onClick={() => setActiveProject(null)}
+                className="btn-ghost justify-center text-sm"
+              >
+                {isAr ? 'إغلاق' : 'Close'}
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

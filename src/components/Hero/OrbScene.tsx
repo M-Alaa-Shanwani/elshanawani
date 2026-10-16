@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useTheme } from '@/context/ThemeContext';
+﻿import { useEffect, useRef, useState } from 'react';
 
 type Values = {
   radius: number;
@@ -40,7 +41,7 @@ const params: Values = {
   liquidBright: 1.0,
   filament: 1.4,
   core: 0.3,
-  background: '#070A18',
+  background: '#05070C',
   blend: 'Auto',
 };
 
@@ -65,7 +66,7 @@ const PRESETS: { name: string; values: Values }[] = [
       liquidBright: 1.0,
       filament: 1.4,
       core: 0.3,
-      background: '#070A18',
+      background: '#05070C',
       blend: 'Auto',
     },
   },
@@ -353,16 +354,21 @@ function blendFor(v: Values): number {
 }
 
 export default function OrbScene() {
+  const { theme } = useTheme();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activePreset] = useState(0);
 
   useEffect(() => {
     Object.assign(params, PRESETS[activePreset].values);
+    if (theme === 'light') {
+      params.background = '#F8FAFC';
+      params.blend = 'Ink';
+    }
     document.body.style.background = params.background;
     document.body.style.setProperty('--page-bg', params.background);
     document.body.classList.toggle('light-bg', luminance(params.background) > 0.5);
-  }, [activePreset]);
+  }, [activePreset, theme]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -389,7 +395,7 @@ export default function OrbScene() {
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    gl.clearColor(7 / 255, 10 / 255, 24 / 255, 1.0);
+    gl.clearColor(5 / 255, 7 / 255, 12 / 255, 1.0);
 
     const U = {
       time: gl.getUniformLocation(program, 'u_time'),
@@ -452,8 +458,8 @@ export default function OrbScene() {
       gl.uniform1f(U.liquidBright, v.liquidBright);
       gl.uniform1f(U.filament, v.filament);
       gl.uniform1f(U.core, v.core);
-      gl.uniform3fv(U.bg, hexToRgb(v.background));
-      gl.uniform1f(U.blend, blendFor(v));
+      gl.uniform3fv(U.bg, hexToRgb(params.background));
+      gl.uniform1f(U.blend, blendFor(params));
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
@@ -511,12 +517,57 @@ export default function OrbScene() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!wrapperRef.current) return;
+      const hero = document.getElementById('hero');
+      const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : window.innerHeight;
+
+      // Start appearing right when user starts leaving the hero section into the about section
+      const startFade = Math.max(0, heroBottom - window.innerHeight * 0.6);
+      const endFade = heroBottom - window.innerHeight * 0.15;
+
+      const scrollY = window.scrollY;
+
+      if (scrollY <= startFade) {
+        wrapperRef.current.style.opacity = '0';
+        wrapperRef.current.style.visibility = 'hidden';
+      } else if (scrollY >= endFade) {
+        wrapperRef.current.style.opacity = '1';
+        wrapperRef.current.style.visibility = 'visible';
+      } else {
+        const progress = (scrollY - startFade) / (endFade - startFade);
+        wrapperRef.current.style.opacity = Math.max(0, Math.min(1, progress)).toString();
+        wrapperRef.current.style.visibility = 'visible';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
   return (
-    <div ref={wrapperRef} className="orb-section">
+    <div
+      ref={wrapperRef}
+      className="orb-section pointer-events-none"
+      style={{
+        opacity: 0,
+        visibility: 'hidden',
+        transition: 'opacity 0.25s ease-out',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+      }}
+    >
       <canvas ref={canvasRef} className="orb-canvas" aria-hidden="true" />
-      <div className="orb-presets">
-       
-      </div>
+      <div className="orb-presets" />
     </div>
   );
 }
+

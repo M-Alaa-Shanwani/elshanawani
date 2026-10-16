@@ -1,85 +1,99 @@
 import { useTilt } from '@/hooks/useTilt';
+import { useTranslation } from '@/i18n';
 
-export interface WorkItem {
+export interface ProjectItem {
+  id: string;
+  category: 'web' | 'mobile' | 'ecommerce' | 'ai' | 'uiux';
   image: string;
-  imageAlt: string;
-  title: string;
-  role: string;
-  description: string;
+  badge: { ar: string; en: string };
+  title: { ar: string; en: string };
+  desc: { ar: string; en: string };
+  metric: { ar: string; en: string };
   tags: string[];
-  /** True until the placeholder art in /public/work is swapped for a real
-   *  screenshot — renders a visible "placeholder" ribbon so nobody mistakes
-   *  it for a finished asset. Remove/flip this once you add the real image. */
-  isPlaceholderImage?: boolean;
+  details: {
+    ar: { role: string; highlight: string };
+    en: { role: string; highlight: string };
+  };
 }
 
-export default function WorkCard({ item }: { item: WorkItem }) {
-  const tiltRef = useTilt<HTMLDivElement>(6);
+interface WorkCardProps {
+  project: ProjectItem;
+  onOpenDetails: (project: ProjectItem) => void;
+}
+
+export default function WorkCard({ project, onOpenDetails }: WorkCardProps) {
+  const tiltRef = useTilt<HTMLDivElement>(4);
+  const { lang } = useTranslation();
+  const isAr = lang === 'ar';
+
+  const badgeText = isAr ? project.badge.ar : project.badge.en;
+  const titleText = isAr ? project.title.ar : project.title.en;
+  const descText = isAr ? project.desc.ar : project.desc.en;
+  const metricText = isAr ? project.metric.ar : project.metric.en;
 
   return (
-    <div ref={tiltRef} className="card-surface group flex h-full flex-col will-change-transform">
-      {/* Browser screenshot frame */}
-      <div className="relative w-full overflow-hidden border-b border-ink-600 bg-ink-900">
-        {/* Chrome / title bar */}
-        <div className="relative z-10 flex items-center gap-2 border-b border-ink-600/80 bg-ink-800/90 px-2 py-1.5 backdrop-blur-sm">
-          <div className="flex shrink-0 items-center gap-1" aria-hidden="true">
-            <span className="h-2 w-2 rounded-full bg-[#FF5F57]" />
-            <span className="h-2 w-2 rounded-full bg-[#FEBC2E]" />
-            <span className="h-2 w-2 rounded-full bg-[#28C840]" />
-          </div>
-          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded border border-ink-600/70 bg-ink-950/70 px-2 py-0.5">
-            <span
-              className="h-2 w-2 shrink-0 rounded-full border border-cyan/40 bg-cyan/20"
-              aria-hidden="true"
-            />
-            <span className="truncate font-mono text-[8px] text-text-dim">
-              https://app.example.com
-            </span>
-          </div>
+    <div
+      ref={tiltRef}
+      onClick={() => onOpenDetails(project)}
+      className="group card-surface relative flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-ink-600/70 bg-ink-900/70 backdrop-blur-md transition-all duration-300 hover:border-cyan/50 hover:shadow-glow will-change-transform"
+    >
+      {/* Image Preview Container */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-ink-950">
+        <img
+          src={project.image}
+          alt={titleText}
+          loading="lazy"
+          className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+
+        {/* Gradient overlays */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
+
+        {/* Category Pill */}
+        <div className="absolute top-3 start-3 z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan/40 bg-ink-950/85 px-3 py-1 font-mono text-[11px] font-medium text-cyan backdrop-blur-md shadow-lg">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse" />
+            {badgeText}
+          </span>
         </div>
 
-        {/* Viewport / screenshot area */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-ink-950">
-          <img
-            src={item.image}
-            alt={item.imageAlt}
-            loading="lazy"
-            className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          />
-          <div
-            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),inset_0_8px_20px_rgba(0,0,0,0.35)]"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25"
-            aria-hidden="true"
-          />
-          {item.isPlaceholderImage && (
-            <span className="absolute right-2 top-2 z-10 rounded-full bg-ink-950/80 px-2 py-0.5 font-mono text-[8px] uppercase tracking-wide text-cyan backdrop-blur-sm">
-              Placeholder
-            </span>
-          )}
+        {/* Metric Pill */}
+        <div className="absolute bottom-3 start-3 z-10">
+          <span className="inline-flex items-center rounded-lg border border-white/15 bg-ink-950/90 px-2.5 py-1 text-[11px] font-medium text-text backdrop-blur-md shadow-md">
+            {metricText}
+          </span>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-3">
-        <span className="font-mono text-[9px] text-text-dim">{item.role}</span>
-        <h3 className="mt-1 line-clamp-2 text-[13px] font-semibold leading-snug text-text">
-          {item.title}
+      {/* Content Area */}
+      <div className="flex flex-1 flex-col p-4.5 xs:p-5 sm:p-6">
+        <h3 className="text-base font-bold text-text transition-colors duration-200 group-hover:text-cyan sm:text-lg">
+          {titleText}
         </h3>
-        <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-text-muted">
-          {item.description}
+
+        <p className="mt-2 text-xs leading-relaxed text-text-muted sm:mt-2.5 sm:text-sm line-clamp-3">
+          {descText}
         </p>
-        <ul className="mt-2.5 flex flex-wrap gap-1">
-          {item.tags.slice(0, 3).map((tag) => (
-            <li
+
+        {/* Tech Stack Pills */}
+        <div className="mt-3.5 flex flex-wrap gap-1.5 pt-3 border-t border-ink-700/60 sm:mt-4">
+          {project.tags.map((tag) => (
+            <span
               key={tag}
-              className="rounded-full border border-ink-600 px-1.5 py-0.5 font-mono text-[8px] text-text-muted"
+              className="rounded-md border border-ink-700/80 bg-ink-800/80 px-2.5 py-0.5 font-mono text-[10px] text-text-muted transition-colors group-hover:border-ink-600"
             >
               {tag}
-            </li>
+            </span>
           ))}
-        </ul>
+        </div>
+
+        {/* Action Link */}
+        <div className="mt-4 flex items-center justify-between text-xs font-semibold text-cyan pt-2 sm:mt-5">
+          <span>{isAr ? 'عرض تفاصيل المشروع' : 'View Project Details'}</span>
+          <span className="text-sm transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+            {isAr ? '←' : '→'}
+          </span>
+        </div>
       </div>
     </div>
   );

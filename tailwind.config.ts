@@ -1,31 +1,38 @@
 import type { Config } from 'tailwindcss';
 
-// Design tokens for the "Blueprint" system — a dark, technical, dual-accent
-// theme built around the idea of software as constructed architecture.
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  darkMode: 'class',
   theme: {
+    screens: {
+      xs: '420px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         ink: {
-          950: '#05070C', // page background
-          900: '#0A0E17', // section background
-          800: '#0D1220', // card surface
-          700: '#141B2E', // raised surface / borders
-          600: '#232C46', // hairline borders on surfaces
+          950: 'rgb(var(--ink-950) / <alpha-value>)',
+          900: 'rgb(var(--ink-900) / <alpha-value>)',
+          800: 'rgb(var(--ink-800) / <alpha-value>)',
+          700: 'rgb(var(--ink-700) / <alpha-value>)',
+          600: 'rgb(var(--ink-600) / <alpha-value>)',
         },
         cyan: {
-          DEFAULT: '#5EEBFF',
-          soft: '#5EEBFF33',
+          DEFAULT: 'rgb(var(--cyan) / <alpha-value>)',
+          soft: 'rgb(var(--cyan) / 0.2)',
         },
         violet: {
-          DEFAULT: '#9D7CFF',
-          soft: '#9D7CFF33',
+          DEFAULT: 'rgb(var(--violet) / <alpha-value>)',
+          soft: 'rgb(var(--violet) / 0.2)',
         },
         text: {
-          DEFAULT: '#E6ECFF',
-          muted: '#8A93B3',
-          dim: '#545E7E',
+          DEFAULT: 'rgb(var(--text-main) / <alpha-value>)',
+          muted: 'rgb(var(--text-muted) / <alpha-value>)',
+          dim: 'rgb(var(--text-dim) / <alpha-value>)',
         },
       },
       fontFamily: {

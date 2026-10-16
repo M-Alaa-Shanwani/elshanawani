@@ -6,9 +6,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const links = [
+    { href: '#about', label: lang === 'ar' ? 'من أنا' : 'About' },
     { href: '#services', label: t('nav.capabilities') },
     { href: '#work', label: t('nav.work') },
-    { href: '#stack', label: t('nav.stack') },
+    { href: '#process', label: t('nav.stack') },
     { href: '#contact', label: t('nav.contact') },
   ];
 

@@ -11,7 +11,7 @@ export default function WhatsAppFloat() {
     const tooltipText = lang === 'ar' ? 'تواصل عبر واتس اب' : 'Chat on WhatsApp';
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 select-none group sm:bottom-6 sm:right-6 rtl:left-4 rtl:right-auto sm:rtl:left-6"
+        <div className="fixed bottom-4 right-4 z-40 select-none group sm:bottom-6 sm:right-6 rtl:left-4 rtl:right-auto sm:rtl:left-6"
              style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
             {/* Tooltip */}
             <span className="pointer-events-none absolute bottom-full right-0 mb-3 hidden translate-y-2 whitespace-nowrap rounded-lg border border-ink-600 bg-ink-900/90 px-3 py-1.5 font-mono text-xs text-text opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:block rtl:left-0 rtl:right-auto">
@@ -27,10 +27,10 @@ export default function WhatsAppFloat() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp Contact"
-                className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-black shadow-[0_0_25px_rgba(37,211,102,0.55)] transition-all duration-300 hover:scale-110 active:scale-95 group-hover:shadow-[0_0_35px_rgba(37,211,102,0.85)] sm:h-14 sm:w-14"
+                className="relative flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-black shadow-[0_0_20px_rgba(37,211,102,0.5)] transition-all duration-300 hover:scale-110 active:scale-95 group-hover:shadow-[0_0_35px_rgba(37,211,102,0.85)]"
             >
                 <svg
-                    className="h-6 w-6 fill-current sm:h-7 sm:w-7"
+                    className="h-5 w-5 xs:h-5.5 xs:w-5.5 sm:h-7 sm:w-7 fill-current"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                 >

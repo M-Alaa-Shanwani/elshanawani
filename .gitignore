@@ -29,3 +29,7 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Scratch media
+/*.mp4
+

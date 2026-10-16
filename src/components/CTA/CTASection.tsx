@@ -27,32 +27,32 @@ export default function CTASection() {
   }, []);
 
   return (
-    <section id="contact" className="relative py-16 sm:py-24 md:py-36">
+    <section id="contact" className="relative py-14 sm:py-24 md:py-36">
       <div className="section-shell">
         <div
           ref={ref}
-          className="card-surface relative overflow-hidden px-5 py-12 text-center sm:px-8 sm:py-16 md:px-16"
+          className="card-surface relative overflow-hidden rounded-2xl sm:rounded-3xl px-4.5 py-10 xs:px-6 xs:py-12 sm:px-8 sm:py-16 md:px-16 text-center"
         >
           <div className="absolute inset-0 bg-blueprint-grid bg-blueprint opacity-20" />
           <div className="absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/20 blur-3xl" />
 
           <div className="relative">
-            <p className="eyebrow flex justify-center">{t('cta.eyebrow')}</p>
-            <h2 className="mx-auto mt-4 max-w-2xl text-2xl font-semibold text-text sm:text-3xl md:text-5xl">
+            <p className="eyebrow flex justify-center text-[10px] xs:text-xs">{t('cta.eyebrow')}</p>
+            <h2 className="mx-auto mt-3 sm:mt-4 max-w-2xl text-xl xs:text-2xl sm:text-3xl md:text-5xl font-bold text-text leading-snug sm:leading-tight">
               {t('cta.title')}
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-sm text-text-muted sm:mt-5 sm:text-base">
+            <p className="mx-auto mt-2.5 sm:mt-5 max-w-lg text-xs xs:text-sm sm:text-base text-text-muted leading-relaxed">
               {t('cta.subtitle')}
             </p>
-            <div className="mt-8 flex justify-center sm:mt-10">
+            <div className="mt-6 sm:mt-10 flex justify-center">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary group inline-flex w-full max-w-sm items-center justify-center gap-3 px-6 py-3.5 font-mono text-sm font-semibold shadow-glow hover:shadow-[0_0_55px_-5px_rgba(94,235,255,0.5)] sm:w-auto sm:max-w-none sm:px-8 sm:py-4 sm:text-base"
+                className="btn-primary group inline-flex w-full xs:w-auto max-w-sm items-center justify-center gap-2.5 sm:gap-3 px-5 py-3 xs:px-6 xs:py-3.5 sm:px-8 sm:py-4 font-mono text-xs xs:text-sm sm:text-base font-semibold shadow-glow hover:shadow-[0_0_55px_-5px_rgba(94,235,255,0.5)]"
               >
                 <svg
-                  className="h-6 w-6 fill-current text-ink-950 transition-transform duration-300 group-hover:scale-110"
+                  className="h-5 w-5 sm:h-6 sm:w-6 fill-current text-ink-950 transition-transform duration-300 group-hover:scale-110"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >

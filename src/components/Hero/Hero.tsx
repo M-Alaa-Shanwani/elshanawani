@@ -1,12 +1,25 @@
 import { useEffect, useRef } from 'react';
-import HeroScene from './HeroScene';
-import OrbScene from './OrbScene';
 import { gsap } from '@/lib/gsap';
 import { useTranslation } from '@/i18n';
 
 export default function Hero() {
   const copyRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.defaultMuted = true;
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Autoplay error:', err);
+        });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!copyRef.current) return;
@@ -21,14 +34,30 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-[100svh] w-full items-center overflow-hidden pt-16 pb-20 sm:pb-16"
+      className="relative z-10 flex min-h-[100svh] w-full items-center overflow-hidden pt-16 pb-16"
     >
-      <div className="absolute inset-0 bg-blueprint-grid bg-blueprint opacity-40" />
-      <div className="absolute inset-0 bg-grid-fade" />
-      <OrbScene />
-      <HeroScene />
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover object-center"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
+        {/* Soft dark overlay */}
+        <div className="absolute inset-0 bg-ink-950/40 dark:bg-black/50 transition-colors duration-300" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink-950 via-ink-950/60 to-transparent pointer-events-none" />
+      </div>
 
-      <div ref={copyRef} className="section-shell relative z-10 w-full pointer-events-none">
+      <div className="absolute inset-0 bg-blueprint-grid bg-blueprint opacity-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-grid-fade pointer-events-none" />
+
+      <div ref={copyRef} className="section-shell relative z-20 w-full pointer-events-none">
         <p data-reveal className="eyebrow mb-4 text-[10px] leading-relaxed sm:mb-6 sm:text-xs">
           {t('hero.eyebrow')}
         </p>
@@ -52,10 +81,6 @@ export default function Hero() {
             {t('hero.cta_secondary')}
           </a>
         </div>
-      </div>
-
-      <div className="absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 font-mono text-[10px] text-text-dim sm:bottom-8 sm:block sm:text-xs">
-        {t('hero.scroll')}
       </div>
     </section>
   );
