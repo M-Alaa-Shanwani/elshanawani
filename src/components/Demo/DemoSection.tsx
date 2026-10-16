@@ -163,7 +163,7 @@ export default function DemoSection() {
         >
           <div className="flex items-center gap-4 sm:gap-5">
             <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-cyan/25 bg-[radial-gradient(circle_at_center,#121B3B_0%,#070B18_100%)] p-2 shadow-[0_8px_28px_rgba(67,97,238,0.35)] sm:h-20 sm:w-20">
-              <img src="/projects/madar-logo.svg" alt="MADAR logo" className="h-full w-full object-contain" loading="lazy" />
+              <img src={`${import.meta.env.BASE_URL}projects/madar-logo.svg`} alt="MADAR logo" className="h-full w-full object-contain" loading="lazy" />
             </div>
             <div dir="ltr">
               <div className="flex items-baseline gap-2">

@@ -356,7 +356,11 @@ export default function WorksSection() {
             {/* Modal Image */}
             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-ink-700 bg-ink-950">
               <img
-                src={activeProject.image}
+                src={
+                  activeProject.image.startsWith('http') || activeProject.image.startsWith(import.meta.env.BASE_URL)
+                    ? activeProject.image
+                    : `${import.meta.env.BASE_URL}${activeProject.image.replace(/^\/+/, '')}`
+                }
                 alt={isAr ? activeProject.title.ar : activeProject.title.en}
                 className="h-full w-full object-cover object-top"
               />

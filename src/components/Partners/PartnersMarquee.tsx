@@ -10,21 +10,21 @@ interface LogoItem {
 
 // Track 1: 6 logos
 const ROW_1: LogoItem[] = [
-  { id: '1', name: 'MADAR OS', src: '/logos/projects/madar.svg' },
-  { id: '2', name: 'Sabk Al-Jusore', src: '/logos/projects/sabk-aljusore.svg' },
-  { id: '3', name: 'Fintech Platform', src: '/logos/projects/project-logo-02.png' },
-  { id: '4', name: 'Retail App', src: '/logos/projects/project-logo-03.png' },
-  { id: '5', name: 'Logistics System', src: '/logos/projects/project-logo-04.png' },
-  { id: '6', name: 'E-Commerce Solution', src: '/logos/projects/project-logo-05.png' },
+  { id: '1', name: 'MADAR OS', src: `${import.meta.env.BASE_URL}logos/projects/madar.svg` },
+  { id: '2', name: 'Sabk Al-Jusore', src: `${import.meta.env.BASE_URL}logos/projects/sabk-aljusore.svg` },
+  { id: '3', name: 'Fintech Platform', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-02.png` },
+  { id: '4', name: 'Retail App', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-03.png` },
+  { id: '5', name: 'Logistics System', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-04.png` },
+  { id: '6', name: 'E-Commerce Solution', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-05.png` },
 ];
 
 // Track 2: 5 logos
 const ROW_2: LogoItem[] = [
-  { id: '7', name: 'Enterprise Portal', src: '/logos/projects/project-logo-06.png' },
-  { id: '8', name: 'Health Platform', src: '/logos/projects/project-logo-07.png' },
-  { id: '9', name: 'SaaS Dashboard', src: '/logos/projects/project-logo-08.png' },
-  { id: '10', name: 'Smart System', src: '/logos/projects/project-logo-09.png' },
-  { id: '11', name: 'Digital Services', src: '/logos/projects/project-logo-10.png' },
+  { id: '7', name: 'Enterprise Portal', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-06.png` },
+  { id: '8', name: 'Health Platform', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-07.png` },
+  { id: '9', name: 'SaaS Dashboard', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-08.png` },
+  { id: '10', name: 'Smart System', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-09.png` },
+  { id: '11', name: 'Digital Services', src: `${import.meta.env.BASE_URL}logos/projects/project-logo-10.png` },
 ];
 
 export default function PartnersMarquee() {

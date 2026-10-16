@@ -31,6 +31,10 @@ export default function WorkCard({ project, onOpenDetails }: WorkCardProps) {
   const descText = isAr ? project.desc.ar : project.desc.en;
   const metricText = isAr ? project.metric.ar : project.metric.en;
 
+  const imageSrc = project.image.startsWith('http') || project.image.startsWith(import.meta.env.BASE_URL)
+    ? project.image
+    : `${import.meta.env.BASE_URL}${project.image.replace(/^\/+/, '')}`;
+
   return (
     <div
       ref={tiltRef}
@@ -40,7 +44,7 @@ export default function WorkCard({ project, onOpenDetails }: WorkCardProps) {
       {/* Image Preview Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-ink-950">
         <img
-          src={project.image}
+          src={imageSrc}
           alt={titleText}
           loading="lazy"
           className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"

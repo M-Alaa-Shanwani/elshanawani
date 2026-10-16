@@ -16,7 +16,7 @@ export default function AboutSection() {
           <div className="hidden sm:flex sm:col-span-5 justify-center">
             <div className="relative w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl border border-ink-700/50">
               <img
-                src="/about-me.jpg"
+                src={`${import.meta.env.BASE_URL}about-me.jpg`}
                 alt="Mohamed Alaa"
                 loading="lazy"
                 className="h-full w-full object-cover object-center aspect-[3/4]"
@@ -30,7 +30,7 @@ export default function AboutSection() {
             <div className="flex sm:hidden items-center gap-3.5 xs:gap-4 mb-5">
               <div className="relative w-24 xs:w-28 shrink-0 overflow-hidden rounded-2xl shadow-xl border border-ink-700/50 aspect-[3/4]">
                 <img
-                  src="/about-me.jpg"
+                  src={`${import.meta.env.BASE_URL}about-me.jpg`}
                   alt="Mohamed Alaa"
                   loading="lazy"
                   className="h-full w-full object-cover object-center"

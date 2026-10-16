@@ -47,7 +47,7 @@ export default function Hero() {
           preload="auto"
           className="h-full w-full object-cover object-center"
         >
-          <source src="/hero-bg.mp4" type="video/mp4" />
+          <source src={`${import.meta.env.BASE_URL}hero-bg.mp4`} type="video/mp4" />
         </video>
         {/* Soft dark overlay */}
         <div className="absolute inset-0 bg-ink-950/40 dark:bg-black/50 transition-colors duration-300" />
