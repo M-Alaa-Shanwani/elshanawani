@@ -65,7 +65,7 @@ export default function Hero() {
           data-reveal
           className="max-w-3xl text-[clamp(1.85rem,7vw,4.75rem)] font-semibold leading-[1.1] text-text sm:leading-[1.05]"
         >
-          {t('hero.headline_1')}
+          {t('hero.headline_1')}{' '}
           <span className="bg-gradient-to-r from-cyan to-violet bg-clip-text text-transparent">
             {t('hero.headline_highlight')}
           </span>

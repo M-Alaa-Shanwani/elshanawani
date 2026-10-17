@@ -11,9 +11,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  esbuild: {
+    drop: ['debugger'],
+    legalComments: 'none',
+  },
   build: {
     target: 'es2020',
     sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         // Split Three.js and GSAP into their own chunks so the main bundle

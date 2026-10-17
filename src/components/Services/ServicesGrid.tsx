@@ -54,10 +54,6 @@ export default function ServicesGrid() {
 
   return (
     <section id="services" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
-      {/* Seamless blend from Hero black into subtle ambient color glow */}
-      <div className="absolute top-0 left-0 right-0 h-40 sm:h-56 pointer-events-none z-0 bg-gradient-to-b from-[#05070C] via-[#05070C]/80 to-transparent" />
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-full max-w-4xl h-48 bg-gradient-to-b from-cyan/10 via-violet/10 to-transparent blur-3xl pointer-events-none -z-10 opacity-60" />
-
       <div className="section-shell relative z-10">
         {/* Section Header */}
         <div className="text-center sm:text-start max-w-3xl mb-8 sm:mb-12">
@@ -79,7 +75,7 @@ export default function ServicesGrid() {
         className="pause-on-hover relative w-full overflow-hidden flex flex-col gap-3 sm:gap-4 md:gap-5 [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
       >
         {/* Row 1: Backend & Cloud (scroll left) */}
-        <div className="animate-marquee flex w-max gap-3 sm:gap-4 will-change-transform">
+        <div className="animate-marquee-slow flex w-max gap-3 sm:gap-4 will-change-transform">
           {row1Repeated.map((tool, idx) => (
             <div
               key={`r1-${tool.name}-${idx}`}
@@ -97,7 +93,7 @@ export default function ServicesGrid() {
         </div>
 
         {/* Row 2: Frontend & Design (scroll right) */}
-        <div className="animate-marquee-reverse flex w-max gap-3 sm:gap-4 will-change-transform">
+        <div className="animate-marquee-reverse-slow flex w-max gap-3 sm:gap-4 will-change-transform">
           {row2Repeated.map((tool, idx) => (
             <div
               key={`r2-${tool.name}-${idx}`}
@@ -115,7 +111,7 @@ export default function ServicesGrid() {
         </div>
 
         {/* Row 3: QA, Testing & DevOps (scroll left) */}
-        <div className="animate-marquee flex w-max gap-3 sm:gap-4 will-change-transform">
+        <div className="animate-marquee-slow flex w-max gap-3 sm:gap-4 will-change-transform">
           {row3Repeated.map((tool, idx) => (
             <div
               key={`r3-${tool.name}-${idx}`}
