@@ -9,16 +9,63 @@ export default function Hero() {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video) {
-      video.defaultMuted = true;
-      video.muted = true;
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.warn('Autoplay error:', err);
-        });
+    if (!video) return;
+
+    // Force mobile-friendly inline autoplay attributes directly on DOM
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('x5-playsinline', 'true');
+    video.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+    video.disablePictureInPicture = true;
+
+    const tryPlay = () => {
+      if (video.paused) {
+        const promise = video.play();
+        if (promise !== undefined) {
+          promise.catch(() => {
+            // Silently handled; user interaction fallback will activate below
+          });
+        }
       }
-    }
+    };
+
+    // 1. Immediate play attempt
+    tryPlay();
+
+    // 2. Play attempts when video buffers metadata/data
+    video.addEventListener('loadedmetadata', tryPlay);
+    video.addEventListener('canplay', tryPlay);
+    video.addEventListener('loadeddata', tryPlay);
+
+    // 3. Fallback for iOS Low Power Mode & strict data saver: play on first user gesture
+    const onUserInteraction = () => {
+      tryPlay();
+      cleanup();
+    };
+
+    const cleanup = () => {
+      window.removeEventListener('touchstart', onUserInteraction);
+      window.removeEventListener('touchend', onUserInteraction);
+      window.removeEventListener('scroll', onUserInteraction);
+      window.removeEventListener('click', onUserInteraction);
+      window.removeEventListener('pointerdown', onUserInteraction);
+    };
+
+    window.addEventListener('touchstart', onUserInteraction, { passive: true, once: true });
+    window.addEventListener('touchend', onUserInteraction, { passive: true, once: true });
+    window.addEventListener('scroll', onUserInteraction, { passive: true, once: true });
+    window.addEventListener('click', onUserInteraction, { passive: true, once: true });
+    window.addEventListener('pointerdown', onUserInteraction, { passive: true, once: true });
+
+    return () => {
+      video.removeEventListener('loadedmetadata', tryPlay);
+      video.removeEventListener('canplay', tryPlay);
+      video.removeEventListener('loadeddata', tryPlay);
+      cleanup();
+    };
   }, []);
 
   useEffect(() => {
@@ -37,7 +84,7 @@ export default function Hero() {
       className="relative z-10 flex min-h-[100svh] w-full items-center overflow-hidden pt-16 pb-16"
     >
       {/* Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         <video
           ref={videoRef}
           autoPlay
@@ -45,7 +92,11 @@ export default function Hero() {
           muted
           playsInline
           preload="auto"
-          className="h-full w-full object-cover object-center"
+          controls={false}
+          disablePictureInPicture
+          className="h-full w-full object-cover object-center pointer-events-none select-none"
+          tabIndex={-1}
+          aria-hidden="true"
         >
           <source src={`${import.meta.env.BASE_URL}hero-bg.mp4`} type="video/mp4" />
         </video>
