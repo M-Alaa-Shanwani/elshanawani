@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTranslation } from '@/i18n';
+import Floating3D from '@/components/layout/Floating3D';
 
 const DEMO_URL = 'https://m-alaa-shanwani.github.io/madar-os/';
 
@@ -106,6 +107,18 @@ export default function DemoSection() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[420px] w-[860px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-indigo-500/15 via-violet/15 to-cyan/15 opacity-70 blur-3xl" />
 
       <div className="section-shell relative z-10">
+        {/* 3D decorative: lightning — speed & power */}
+        <Floating3D
+          src="lightning.png"
+          side="end"
+          glow="violet"
+          duration={5.5}
+          delay={0.2}
+          distance={18}
+          tilt={4}
+          className="absolute -top-6 hidden lg:block lg:end-[4%] lg:w-44 xl:end-[8%] xl:w-56"
+        />
+
         {/* Header */}
         <div data-demo-reveal className="max-w-3xl text-center sm:text-start">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-amber-400 backdrop-blur-md sm:px-3 sm:text-xs">

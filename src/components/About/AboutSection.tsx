@@ -1,4 +1,5 @@
 import { useTranslation } from '@/i18n';
+import Floating3D from '@/components/layout/Floating3D';
 
 export default function AboutSection() {
   const { lang } = useTranslation();
@@ -14,12 +15,25 @@ export default function AboutSection() {
           
           {/* Photo Column - on desktop and tablet (sm:col-span-5) */}
           <div className="hidden sm:flex sm:col-span-5 justify-center">
-            <div className="relative w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl border border-ink-700/50">
-              <img
-                src={`${import.meta.env.BASE_URL}about-me.jpg`}
-                alt="Mohamed Alaa"
-                loading="lazy"
-                className="h-full w-full object-cover object-center aspect-[3/4]"
+            <div className="relative w-full max-w-md">
+              <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl border border-ink-700/50">
+                <img
+                  src={`${import.meta.env.BASE_URL}about-me.jpg`}
+                  alt="Mohamed Alaa"
+                  loading="lazy"
+                  className="h-full w-full object-cover object-center aspect-[3/4]"
+                />
+              </div>
+
+              {/* 3D decorative: profile badge on the photo's outer corner */}
+              <Floating3D
+                src="user.png"
+                side="start"
+                glow="cyan"
+                duration={6.5}
+                delay={0.4}
+                distance={14}
+                className="absolute -bottom-8 -start-6 z-20 w-24 md:-start-10 md:w-32 lg:w-40"
               />
             </div>
           </div>

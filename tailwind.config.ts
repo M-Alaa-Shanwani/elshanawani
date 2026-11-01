@@ -13,6 +13,12 @@ export default {
       '2xl': '1536px',
     },
     extend: {
+      // Half-steps used across components (p-4.5, w-5.5 …) that aren't in
+      // Tailwind's default scale — without these the classes silently no-op.
+      spacing: {
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+      },
       colors: {
         ink: {
           950: 'rgb(var(--ink-950) / <alpha-value>)',
@@ -36,10 +42,13 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"Inter"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
-        arabic: ['"Cairo"', 'sans-serif'],
+        // Each stack pairs a Latin face with an Arabic companion so mixed
+        // AR/EN text always renders with intentional fonts.
+        display: ['"Sora"', '"Readex Pro"', 'system-ui', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"IBM Plex Sans Arabic"', 'ui-monospace', 'monospace'],
+        arabic: ['"IBM Plex Sans Arabic"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        'arabic-display': ['"Readex Pro"', '"Sora"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'grid-fade':

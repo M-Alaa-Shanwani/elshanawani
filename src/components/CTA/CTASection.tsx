@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTranslation } from '@/i18n';
+import Floating3D from '@/components/layout/Floating3D';
 
 export default function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,7 +37,35 @@ export default function CTASection() {
           <div className="absolute inset-0 bg-blueprint-grid bg-blueprint opacity-20" />
           <div className="absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/20 blur-3xl" />
 
+          {/* 3D decorative: mail on the end side, mirrored sparkles on the start side */}
+          <Floating3D
+            src="mail.png"
+            side="end"
+            glow="cyan"
+            duration={6}
+            distance={18}
+            className="absolute top-1/2 hidden -translate-y-1/2 lg:block lg:end-[2%] lg:w-36 xl:end-[5%] xl:w-48"
+          />
+          <Floating3D
+            src="sparkles.webp"
+            side="start"
+            glow="violet"
+            duration={7.5}
+            delay={0.8}
+            distance={14}
+            className="absolute top-[14%] hidden lg:block lg:start-[3%] lg:w-24 xl:start-[6%] xl:w-32"
+          />
+
           <div className="relative">
+            {/* Compact mail icon for tablet / mobile */}
+            <Floating3D
+              src="mail.png"
+              side="end"
+              glow="cyan"
+              duration={5}
+              distance={10}
+              className="relative mx-auto mb-3 w-20 xs:w-24 sm:mb-5 sm:w-28 lg:hidden"
+            />
             <p className="eyebrow flex justify-center text-[10px] xs:text-xs">{t('cta.eyebrow')}</p>
             <h2 className="mx-auto mt-3 sm:mt-4 max-w-2xl text-xl xs:text-2xl sm:text-3xl md:text-5xl font-bold text-text leading-snug sm:leading-tight">
               {t('cta.title')}

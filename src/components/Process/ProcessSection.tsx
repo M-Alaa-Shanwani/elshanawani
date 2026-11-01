@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTranslation, type TranslationKey } from '@/i18n';
+import Floating3D from '@/components/layout/Floating3D';
 
 interface ProcessStep {
   number: string;
@@ -156,6 +157,17 @@ export default function ProcessSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-cyan/10 via-violet/10 to-emerald-500/10 blur-3xl pointer-events-none -z-10 opacity-60" />
 
       <div className="section-shell relative z-10">
+        {/* 3D decorative: shield — quality & reliability */}
+        <Floating3D
+          src="shield.png"
+          side="end"
+          glow="violet"
+          duration={6.8}
+          delay={0.3}
+          distance={16}
+          className="absolute -top-12 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
+        />
+
         {/* Section Header */}
         <div className="text-center sm:text-start max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-violet/30 bg-violet/10 px-2.5 py-1 font-mono text-[11px] font-semibold text-violet tracking-wider uppercase backdrop-blur-md sm:px-3 sm:text-xs">

@@ -1,5 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { TechIcon } from './techIcons';
+import Floating3D from '@/components/layout/Floating3D';
 
 export interface Tool {
   name: string;
@@ -55,6 +56,18 @@ export default function ServicesGrid() {
   return (
     <section id="services" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       <div className="section-shell relative z-10">
+        {/* 3D decorative: gear — engineering toolset */}
+        <Floating3D
+          src="gear.webp"
+          side="end"
+          glow="cyan"
+          duration={6}
+          delay={0.6}
+          distance={14}
+          tilt={8}
+          className="absolute -top-10 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
+        />
+
         {/* Section Header */}
         <div className="text-center sm:text-start max-w-3xl mb-8 sm:mb-12">
           <p className="eyebrow">{t('services.eyebrow')}</p>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTranslation } from '@/i18n';
+import Floating3D from '@/components/layout/Floating3D';
 
 interface LogoItem {
   id: string;
@@ -66,6 +67,17 @@ export default function PartnersMarquee() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[360px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-cyan/10 via-violet/15 to-cyan/10 opacity-60 blur-3xl" />
 
       <div className="section-shell relative z-10 mb-8 sm:mb-14">
+        {/* 3D decorative: trophy — track record */}
+        <Floating3D
+          src="trophy.png"
+          side="end"
+          glow="violet"
+          duration={6.4}
+          delay={0.5}
+          distance={14}
+          className="absolute -top-8 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
+        />
+
         {/* Section Header */}
         <div data-marquee-reveal className="max-w-3xl text-center sm:text-start">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-cyan backdrop-blur-md sm:px-3 sm:text-xs">

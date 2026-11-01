@@ -51,7 +51,8 @@
 
   body {
     @apply bg-ink-950 text-text font-body antialiased;
-    font-feature-settings: 'ss01' 1;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -59,8 +60,56 @@
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     @apply font-display tracking-tight;
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -0.025em;
+  }
+
+  /* ---------- Arabic typography ---------- */
+  .font-arabic {
+    line-height: 1.75;
+  }
+
+  .font-arabic h1,
+  .font-arabic h2,
+  .font-arabic h3,
+  .font-arabic h4,
+  .font-arabic .font-display {
+    font-family: theme('fontFamily.arabic-display');
+  }
+
+  .font-arabic h1,
+  .font-arabic h2 {
+    line-height: 1.4;
+  }
+
+  /* Letter-spacing breaks Arabic letter joining — neutralise it in RTL. */
+  .font-arabic h1,
+  .font-arabic h2,
+  .font-arabic h3,
+  .font-arabic h4,
+  .font-arabic .eyebrow,
+  .font-arabic [class*='tracking-'] {
+    letter-spacing: 0;
+  }
+
+  /* Monospace spacing makes Arabic words look broken apart (wide gaps), so
+     UI labels/buttons switch to the Arabic sans in RTL. Explicitly-LTR
+     blocks (tech-stack marquee, code tags) keep the mono face. */
+  .font-arabic .font-mono,
+  .font-arabic .eyebrow,
+  .font-arabic .btn-primary,
+  .font-arabic .btn-ghost {
+    font-family: theme('fontFamily.arabic');
+  }
+
+  .font-arabic [dir='ltr'] .font-mono {
+    font-family: theme('fontFamily.mono');
   }
 
   ::selection {
@@ -275,6 +324,62 @@
   .pause-on-hover:hover .animate-marquee-reverse-slow {
     animation-play-state: paused;
   }
+}
+
+/* ======================================================== */
+/* Floating 3D decorative icons                             */
+/* ======================================================== */
+@keyframes float-3d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, var(--float-distance, -16px), 0) rotate(var(--float-rotate, 3deg));
+  }
+}
+
+@keyframes float-3d-shadow {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.72);
+    opacity: 0.3;
+  }
+}
+
+.floating-3d {
+  opacity: 0;
+  scale: 0.85;
+  translate: 0 24px;
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), scale 1s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-3d.is-visible {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+}
+
+.float-3d {
+  animation: float-3d var(--float-duration, 6s) ease-in-out var(--float-delay, 0s) infinite;
+  will-change: transform;
+}
+
+.float-3d-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -6%;
+  width: 55%;
+  height: 8%;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse at center, rgba(76, 60, 200, 0.45), transparent 70%);
+  filter: blur(6px);
+  animation: float-3d-shadow var(--float-duration, 6s) ease-in-out var(--float-delay, 0s) infinite;
 }
 
 /* ======================================================== */
