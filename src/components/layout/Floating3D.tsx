@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 import { useTranslation } from '@/i18n';
 
 /**
@@ -31,31 +31,10 @@ export default function Floating3D({
   glow = 'violet',
 }: Floating3DProps) {
   const { dir } = useTranslation();
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
 
   const physical =
     dir === 'rtl' ? (side === 'start' ? 'right' : 'left') : side === 'start' ? 'left' : 'right';
   const flip = physical === 'left';
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) {
-      setVisible(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.01, rootMargin: '150px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   const animClass = flip ? 'float-3d-b' : 'float-3d-a';
   const animStyle: CSSProperties = {
@@ -65,11 +44,8 @@ export default function Floating3D({
 
   return (
     <div
-      ref={ref}
       aria-hidden="true"
-      className={`floating-3d isolate pointer-events-none select-none transition-all ${
-        visible ? 'is-visible' : ''
-      } ${className}`}
+      className={`floating-3d isolate pointer-events-none select-none ${className}`}
     >
       {/* Soft ambient glow */}
       <div
