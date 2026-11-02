@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/Hero/Hero';
 import AboutSection from '@/components/About/AboutSection';
 import DemoSection from '@/components/Demo/DemoSection';
-import FluidSimulation from '@/components/layout/FluidSimulation';
+import OrbScene from '@/components/Hero/OrbScene';
 import ServicesGrid from '@/components/Services/ServicesGrid';
 import PartnersMarquee from '@/components/Partners/PartnersMarquee';
 import WorksSection from '@/components/Work/WorksSection';
@@ -18,7 +18,7 @@ function AppContent() {
 
   return (
     <div className={`relative min-h-screen overflow-x-hidden ${lang === 'ar' ? 'font-arabic' : ''}`} dir={dir}>
-      <FluidSimulation />
+      <OrbScene />
       <Navbar />
       <main className="relative z-10">
         <Hero />

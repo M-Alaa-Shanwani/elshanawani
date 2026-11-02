@@ -304,19 +304,10 @@ export default function WorksSection() {
     const card = cardsRef.current[index];
     if (!wrap || !card) return;
 
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
-    if (isMobile) {
-      const start = card.offsetTop;
-      wrap.scrollTo({
-        top: start - (wrap.clientHeight / 2 - card.clientHeight / 2),
-        behavior: 'smooth',
-      });
-    } else {
-      const wrapRect = wrap.getBoundingClientRect();
-      const cardRect = card.getBoundingClientRect();
-      const diff = (cardRect.left + cardRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
-      wrap.scrollBy({ left: diff, behavior: 'smooth' });
-    }
+    const wrapRect = wrap.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const diff = (cardRect.left + cardRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
+    wrap.scrollBy({ left: diff, behavior: 'smooth' });
   }, []);
 
   const activate = useCallback(
@@ -362,7 +353,7 @@ export default function WorksSection() {
     return () => window.removeEventListener('resize', onResize);
   }, [activeIndex, center]);
 
-  // Touch swipe support
+  // Touch swipe support - only captures horizontal gestures, never hijacks vertical scroll
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartRef.current = {
       x: e.touches[0].clientX,
@@ -373,11 +364,39 @@ export default function WorksSection() {
   const handleTouchEnd = (e: React.TouchEvent) => {
     const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
     const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
 
-    if (isMobile ? Math.abs(dy) > 60 : Math.abs(dx) > 60) {
-      const step = (isMobile ? dy : dx) > 0 ? -1 : 1;
-      go(isAr && !isMobile ? -step : step);
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      const step = dx > 0 ? (isAr ? -1 : 1) : isAr ? 1 : -1;
+      go(step);
+    }
+  };
+
+  // Sync active card on mobile momentum scrolling
+  const handleScroll = () => {
+    const wrap = trackWrapRef.current;
+    if (!wrap) return;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    if (!isMobile) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const centerX = wrapRect.left + wrapRect.width / 2;
+
+    let closestIdx = 0;
+    let minDistance = Infinity;
+
+    cardsRef.current.forEach((card, idx) => {
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const dist = Math.abs(cardCenter - centerX);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestIdx = idx;
+      }
+    });
+
+    if (closestIdx !== activeIndex) {
+      setActiveIndex(closestIdx);
     }
   };
 
@@ -449,6 +468,7 @@ export default function WorksSection() {
 
           <div
             ref={trackWrapRef}
+            onScroll={handleScroll}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             className="slider relative w-full overflow-x-auto overflow-y-hidden no-scrollbar"
@@ -505,19 +525,6 @@ export default function WorksSection() {
                       <span className="work-project-card__ribbon-title" aria-hidden="true">
                         {getShortTitle(titleText)}
                       </span>
-
-                      {/* Mobile Inactive Bar (< 768px) */}
-                      <div className="work-project-card__mobile-bar" aria-hidden="true">
-                        <span className="font-mono text-xs font-bold text-cyan">
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
-                        <span className="text-sm font-bold text-white truncate flex-1 text-start">
-                          {titleText}
-                        </span>
-                        <span className="text-white/40 text-base font-bold">
-                          {isActive ? '−' : '+'}
-                        </span>
-                      </div>
 
                       {/* Featured Thumbnail */}
                       <div className="work-project-card__thumb">
@@ -592,7 +599,7 @@ export default function WorksSection() {
         {/* Bottom Navigation & Indicator Bar */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-ink-700/60 pt-5">
           {/* Dot Indicators */}
-          <div className="hidden md:flex items-center gap-2 py-1">
+          <div className="flex items-center gap-2 py-1 order-2 sm:order-1">
             {filteredProjects.map((_, idx) => (
               <button
                 key={idx}
@@ -608,7 +615,7 @@ export default function WorksSection() {
           </div>
 
           {/* Navigation Arrows & Counter */}
-          <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
+          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 order-1 sm:order-2">
             <span className="font-mono text-xs text-text-dim">
               <span className="text-cyan font-bold text-sm">
                 {String(activeIndex + 1).padStart(2, '0')}
