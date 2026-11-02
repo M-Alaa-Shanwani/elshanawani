@@ -112,10 +112,8 @@ export default function DemoSection() {
           src="lightning.png"
           side="end"
           glow="violet"
-          duration={5.5}
-          delay={0.2}
-          distance={18}
-          tilt={4}
+          duration={3.4}
+          delay={0.3}
           className="absolute -top-6 hidden lg:block lg:end-[4%] lg:w-44 xl:end-[8%] xl:w-56"
         />
 

@@ -30,9 +30,8 @@ export default function AboutSection() {
                 src="user.png"
                 side="start"
                 glow="cyan"
-                duration={6.5}
-                delay={0.4}
-                distance={14}
+                duration={3.8}
+                delay={0.2}
                 className="absolute -bottom-8 -start-6 z-20 w-24 md:-start-10 md:w-32 lg:w-40"
               />
             </div>

@@ -2,15 +2,8 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from '@/i18n';
 
 /**
- * Decorative floating 3D icon.
- *
- * All source images are rendered "leaning inward from the left", i.e. they are
- * designed to sit on the RIGHT side of a layout. When the icon ends up on the
- * physical LEFT side (because of `side` + the current text direction), the image
- * is mirrored so it always leans toward the content.
- *
- * Positioning / sizing is fully controlled by the caller through `className`
- * (use logical utilities like `start-*` / `end-*` so it adapts to RTL/LTR).
+ * Decorative floating 3D icon with continuous silky-smooth floating animation,
+ * ambient glow, breathing shadow, and RTL/LTR auto-mirroring.
  */
 type Side = 'start' | 'end';
 
@@ -21,14 +14,10 @@ interface Floating3DProps {
   side: Side;
   /** Positioning + size utilities, e.g. `absolute top-0 end-4 w-40`. */
   className?: string;
-  /** Full float cycle in seconds. */
+  /** Animation duration in seconds (defaults to ~3.5s for natural visible floating). */
   duration?: number;
-  /** Animation delay in seconds (de-syncs multiple icons). */
+  /** Animation delay in seconds. */
   delay?: number;
-  /** Vertical travel in px. */
-  distance?: number;
-  /** Max rotation in degrees during the float (auto-mirrored when flipped). */
-  tilt?: number;
   /** Glow tint behind the icon. */
   glow?: 'cyan' | 'violet';
 }
@@ -37,10 +26,8 @@ export default function Floating3D({
   src,
   side,
   className = '',
-  duration = 6,
+  duration = 3.6,
   delay = 0,
-  distance = 16,
-  tilt = 3,
   glow = 'violet',
 }: Floating3DProps) {
   const { dir } = useTranslation();
@@ -53,7 +40,10 @@ export default function Floating3D({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      setVisible(true);
+      return;
+    }
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -61,46 +51,47 @@ export default function Floating3D({
           io.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.01, rootMargin: '150px' }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const floatVars = {
-    '--float-duration': `${duration}s`,
-    '--float-delay': `${delay}s`,
-    '--float-distance': `${-Math.abs(distance)}px`,
-    '--float-rotate': `${flip ? -tilt : tilt}deg`,
-  } as CSSProperties;
+  const animClass = flip ? 'float-3d-b' : 'float-3d-a';
+  const animStyle: CSSProperties = {
+    animationDuration: `${duration}s`,
+    animationDelay: `${delay}s`,
+  };
 
   return (
     <div
       ref={ref}
       aria-hidden="true"
-      className={`floating-3d isolate pointer-events-none select-none ${visible ? 'is-visible' : ''} ${className}`}
+      className={`floating-3d isolate pointer-events-none select-none transition-all ${
+        visible ? 'is-visible' : ''
+      } ${className}`}
     >
       {/* Soft ambient glow */}
       <div
-        className={`absolute inset-[18%] -z-10 rounded-full blur-3xl ${
+        className={`absolute inset-[15%] -z-10 rounded-full blur-3xl transition-opacity duration-700 ${
           glow === 'cyan' ? 'bg-cyan/25' : 'bg-violet/30'
         }`}
       />
 
-      <div className="float-3d" style={floatVars}>
+      <div className={animClass} style={animStyle}>
         <img
           src={`${import.meta.env.BASE_URL}3d/${src}`}
           alt=""
           loading="lazy"
           decoding="async"
           draggable={false}
-          className="block h-auto w-full drop-shadow-[0_25px_35px_rgba(76,60,200,0.35)]"
+          className="block h-auto w-full drop-shadow-[0_25px_35px_rgba(76,60,200,0.35)] transition-transform duration-300"
           style={flip ? { transform: 'scaleX(-1)' } : undefined}
         />
       </div>
 
       {/* Ground shadow that breathes with the float */}
-      <div className="float-3d-shadow" style={floatVars} />
+      <div className="float-3d-shadow" style={animStyle} />
     </div>
   );
 }

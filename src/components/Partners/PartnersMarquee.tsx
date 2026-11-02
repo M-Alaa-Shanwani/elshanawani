@@ -72,9 +72,8 @@ export default function PartnersMarquee() {
           src="trophy.png"
           side="end"
           glow="violet"
-          duration={6.4}
-          delay={0.5}
-          distance={14}
+          duration={3.8}
+          delay={0.4}
           className="absolute -top-8 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
         />
 

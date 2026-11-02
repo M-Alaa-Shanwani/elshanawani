@@ -42,13 +42,12 @@ export default {
         },
       },
       fontFamily: {
-        // Each stack pairs a Latin face with an Arabic companion so mixed
-        // AR/EN text always renders with intentional fonts.
-        display: ['"Sora"', '"Readex Pro"', 'system-ui', 'sans-serif'],
-        body: ['"Plus Jakarta Sans"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', '"IBM Plex Sans Arabic"', 'ui-monospace', 'monospace'],
-        arabic: ['"IBM Plex Sans Arabic"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        'arabic-display': ['"Readex Pro"', '"Sora"', 'system-ui', 'sans-serif'],
+        // High-end agency & tech pairing: Outfit (Latin) + Alexandria (Arabic & Latin)
+        display: ['"Outfit"', '"Alexandria"', 'system-ui', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', '"Alexandria"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Alexandria"', 'ui-monospace', 'monospace'],
+        arabic: ['"Alexandria"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        'arabic-display': ['"Alexandria"', '"Outfit"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'grid-fade':

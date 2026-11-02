@@ -162,9 +162,8 @@ export default function ProcessSection() {
           src="shield.png"
           side="end"
           glow="violet"
-          duration={6.8}
-          delay={0.3}
-          distance={16}
+          duration={3.5}
+          delay={0.2}
           className="absolute -top-12 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
         />
 

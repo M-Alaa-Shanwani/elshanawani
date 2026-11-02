@@ -42,17 +42,16 @@ export default function CTASection() {
             src="mail.png"
             side="end"
             glow="cyan"
-            duration={6}
-            distance={18}
+            duration={3.4}
+            delay={0.1}
             className="absolute top-1/2 hidden -translate-y-1/2 lg:block lg:end-[2%] lg:w-36 xl:end-[5%] xl:w-48"
           />
           <Floating3D
             src="sparkles.webp"
             side="start"
             glow="violet"
-            duration={7.5}
-            delay={0.8}
-            distance={14}
+            duration={3.8}
+            delay={0.5}
             className="absolute top-[14%] hidden lg:block lg:start-[3%] lg:w-24 xl:start-[6%] xl:w-32"
           />
 
@@ -62,8 +61,7 @@ export default function CTASection() {
               src="mail.png"
               side="end"
               glow="cyan"
-              duration={5}
-              distance={10}
+              duration={3.2}
               className="relative mx-auto mb-3 w-20 xs:w-24 sm:mb-5 sm:w-28 lg:hidden"
             />
             <p className="eyebrow flex justify-center text-[10px] xs:text-xs">{t('cta.eyebrow')}</p>

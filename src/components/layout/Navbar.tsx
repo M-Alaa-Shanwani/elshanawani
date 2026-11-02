@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from '@/i18n';
+import BrandSwitcher from './BrandSwitcher';
 
 export default function Navbar() {
   const { t, lang, setLang } = useTranslation();
@@ -33,14 +34,7 @@ export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-ink-700/60 bg-ink-950/70 backdrop-blur-md">
       <nav className="section-shell flex h-14 items-center justify-between sm:h-16">
-        <a
-          href="#hero"
-          onClick={close}
-          className="font-display text-base font-semibold tracking-tight text-text sm:text-lg"
-        >
-          {t('nav.brand')}
-          <span className="text-cyan">.</span>
-        </a>
+        <BrandSwitcher onClick={close} />
 
         <ul className="hidden items-center gap-6 font-mono text-sm text-text-muted lg:gap-8 md:flex">
           {links.map((link) => (

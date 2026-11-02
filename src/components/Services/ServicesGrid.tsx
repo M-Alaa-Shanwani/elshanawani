@@ -61,10 +61,8 @@ export default function ServicesGrid() {
           src="gear.webp"
           side="end"
           glow="cyan"
-          duration={6}
-          delay={0.6}
-          distance={14}
-          tilt={8}
+          duration={3.6}
+          delay={0.1}
           className="absolute -top-10 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
         />
 
