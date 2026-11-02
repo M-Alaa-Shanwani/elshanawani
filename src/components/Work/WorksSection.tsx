@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import WorkCard, { type ProjectItem } from './WorkCard';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import type { ProjectItem } from './WorkCard';
 import { useTranslation } from '@/i18n';
 
 const allProjects: ProjectItem[] = [
@@ -271,9 +271,18 @@ export default function WorksSection() {
   const [filter, setFilter] = useState<CategoryFilter>('all');
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const trackWrapRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLElement | null)[]>([]);
+  const touchStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
   const { lang } = useTranslation();
   const isAr = lang === 'ar';
+
+  const getShortTitle = (title: string) => {
+    const parts = title.split(/[–—-]/);
+    return parts[0]?.trim() || title;
+  };
 
   const filterTabs = [
     { id: 'all', label: isAr ? 'الكل' : 'All' },
@@ -289,42 +298,87 @@ export default function WorksSection() {
       ? allProjects
       : allProjects.filter((item) => item.category === filter);
 
-  const scrollToIndex = (index: number) => {
-    if (!sliderRef.current) return;
-    const slides = sliderRef.current.querySelectorAll<HTMLElement>('[data-work-slide]');
-    if (slides[index]) {
-      slides[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+  // Center active card smoothly inside track container
+  const center = useCallback((index: number) => {
+    const wrap = trackWrapRef.current;
+    const card = cardsRef.current[index];
+    if (!wrap || !card) return;
+
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    if (isMobile) {
+      const start = card.offsetTop;
+      wrap.scrollTo({
+        top: start - (wrap.clientHeight / 2 - card.clientHeight / 2),
+        behavior: 'smooth',
+      });
+    } else {
+      const wrapRect = wrap.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const diff = (cardRect.left + cardRect.width / 2) - (wrapRect.left + wrapRect.width / 2);
+      wrap.scrollBy({ left: diff, behavior: 'smooth' });
+    }
+  }, []);
+
+  const activate = useCallback(
+    (index: number, shouldCenter = true) => {
       setActiveIndex(index);
-    }
-  };
-
-  const handleScroll = (direction: 'prev' | 'next') => {
-    const nextIdx = direction === 'next' ? activeIndex + 1 : activeIndex - 1;
-    if (nextIdx >= 0 && nextIdx < filteredProjects.length) {
-      scrollToIndex(nextIdx);
-    }
-  };
-
-  const onTrackScroll = () => {
-    if (!sliderRef.current) return;
-    const container = sliderRef.current;
-    const containerRect = container.getBoundingClientRect();
-    const slides = container.querySelectorAll<HTMLElement>('[data-work-slide]');
-    let closestIdx = 0;
-    let minDistance = Infinity;
-
-    slides.forEach((slide, idx) => {
-      const rect = slide.getBoundingClientRect();
-      const distance = isAr
-        ? Math.abs(rect.right - containerRect.right)
-        : Math.abs(rect.left - containerRect.left);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIdx = idx;
+      if (shouldCenter) {
+        requestAnimationFrame(() => {
+          center(index);
+        });
       }
-    });
+    },
+    [center]
+  );
 
-    setActiveIndex(closestIdx);
+  const go = useCallback(
+    (step: number) => {
+      setActiveIndex((prev) => {
+        const next = Math.min(Math.max(prev + step, 0), filteredProjects.length - 1);
+        requestAnimationFrame(() => center(next));
+        return next;
+      });
+    },
+    [center, filteredProjects.length]
+  );
+
+  // Keyboard navigation
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+        go(isAr ? -1 : 1);
+      } else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+        go(isAr ? 1 : -1);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown, { passive: true });
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [go, isAr]);
+
+  // Window resize re-centering
+  useEffect(() => {
+    const onResize = () => center(activeIndex);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [activeIndex, center]);
+
+  // Touch swipe support
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
+    const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+
+    if (isMobile ? Math.abs(dy) > 60 : Math.abs(dx) > 60) {
+      const step = (isMobile ? dy : dx) > 0 ? -1 : 1;
+      go(isAr && !isMobile ? -step : step);
+    }
   };
 
   return (
@@ -352,12 +406,9 @@ export default function WorksSection() {
                   key={tab.id}
                   onClick={() => {
                     setFilter(tab.id as CategoryFilter);
-                    setActiveIndex(0);
-                    if (sliderRef.current) {
-                      sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                    }
+                    activate(0, true);
                   }}
-                  className={`rounded-full px-3.5 py-1.5 font-mono text-xs shrink-0 transition-all duration-200 ${
+                  className={`rounded-full px-3.5 py-1.5 font-mono text-xs shrink-0 transition-all duration-200 cursor-pointer ${
                     filter === tab.id
                       ? 'bg-cyan text-ink-950 font-semibold shadow-glow scale-105'
                       : 'border border-ink-600 bg-ink-900/80 text-text-muted hover:border-cyan/40 hover:text-text'
@@ -371,63 +422,185 @@ export default function WorksSection() {
             {/* Quick Header Navigation Arrows */}
             <div className="hidden sm:flex items-center gap-2 shrink-0">
               <button
-                onClick={() => handleScroll('prev')}
+                onClick={() => go(-1)}
                 disabled={activeIndex === 0}
-                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-ink-950 hover:shadow-glow disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
                 aria-label={isAr ? 'السابق' : 'Previous'}
               >
-                <span className="text-base font-bold">{isAr ? '→' : '←'}</span>
+                <span className="text-base font-bold">{isAr ? '›' : '‹'}</span>
               </button>
               <button
-                onClick={() => handleScroll('next')}
+                onClick={() => go(1)}
                 disabled={activeIndex === filteredProjects.length - 1}
-                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-ink-950 hover:shadow-glow disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
                 aria-label={isAr ? 'التالي' : 'Next'}
               >
-                <span className="text-base font-bold">{isAr ? '←' : '→'}</span>
+                <span className="text-base font-bold">{isAr ? '‹' : '›'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Projects Slider Track */}
+        {/* Center-Mode Expanding Productivity Slider */}
         <div className="relative mt-8 sm:mt-12">
-          {/* Subtle edge fades for luxury slider look */}
-          <div className="pointer-events-none absolute -inset-y-2 start-0 z-10 w-6 sm:w-12 bg-gradient-to-r from-ink-950 to-transparent" />
-          <div className="pointer-events-none absolute -inset-y-2 end-0 z-10 w-6 sm:w-12 bg-gradient-to-l from-ink-950 to-transparent" />
+          {/* Subtle edge fades for luxury desktop look */}
+          <div className="pointer-events-none absolute -inset-y-2 start-0 z-10 hidden md:block w-6 sm:w-12 bg-gradient-to-r from-ink-950 to-transparent" />
+          <div className="pointer-events-none absolute -inset-y-2 end-0 z-10 hidden md:block w-6 sm:w-12 bg-gradient-to-l from-ink-950 to-transparent" />
 
           <div
-            ref={sliderRef}
-            onScroll={onTrackScroll}
-            className="flex gap-5 sm:gap-6 md:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-6 pt-2 px-1"
+            ref={trackWrapRef}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="slider relative w-full overflow-x-auto overflow-y-hidden no-scrollbar"
           >
-            {filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                data-work-slide
-                className="w-[86vw] xs:w-[360px] sm:w-[410px] md:w-[440px] lg:w-[460px] shrink-0 snap-start transition-transform duration-300"
-              >
-                <WorkCard
-                  project={project}
-                  onOpenDetails={setActiveProject}
-                />
-              </div>
-            ))}
+            <div className="work-slider-track">
+              {filteredProjects.map((project, idx) => {
+                const isActive = activeIndex === idx;
+                const badgeText = isAr ? project.badge.ar : project.badge.en;
+                const titleText = isAr ? project.title.ar : project.title.en;
+                const descText = isAr ? project.desc.ar : project.desc.en;
+                const metricText = isAr ? project.metric.ar : project.metric.en;
+                const imageSrc =
+                  project.image.startsWith('http') || project.image.startsWith(import.meta.env.BASE_URL)
+                    ? project.image
+                    : `${import.meta.env.BASE_URL}${project.image.replace(/^\/+/, '')}`;
+
+                return (
+                  <article
+                    key={project.id}
+                    ref={(el) => (cardsRef.current[idx] = el)}
+                    data-active={isActive ? 'true' : 'false'}
+                    onClick={() => activate(idx, true)}
+                    onMouseEnter={() => {
+                      if (
+                        typeof window !== 'undefined' &&
+                        window.matchMedia('(hover: hover)').matches
+                      ) {
+                        activate(idx, true);
+                      }
+                    }}
+                    className="work-project-card group select-none"
+                  >
+                    {/* Background cover image with hover zoom & dark vignette */}
+                    <img
+                      src={imageSrc}
+                      alt=""
+                      loading="lazy"
+                      className="work-project-card__bg"
+                    />
+
+                    {/* Spine Header with Index for Inactive Desktop Cards */}
+                    <div className="work-project-card__spine">
+                      <span className="work-project-card__idx">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <span className="work-project-card__spine-icon" aria-hidden="true">
+                        ✦
+                      </span>
+                    </div>
+
+                    {/* Card Content Overlay */}
+                    <div className="work-project-card__content">
+                      {/* Ribbon Title for Inactive Desktop Cards */}
+                      <span className="work-project-card__ribbon-title" aria-hidden="true">
+                        {getShortTitle(titleText)}
+                      </span>
+
+                      {/* Mobile Inactive Bar (< 768px) */}
+                      <div className="work-project-card__mobile-bar" aria-hidden="true">
+                        <span className="font-mono text-xs font-bold text-cyan">
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
+                        <span className="text-sm font-bold text-white truncate flex-1 text-start">
+                          {titleText}
+                        </span>
+                        <span className="text-white/40 text-base font-bold">
+                          {isActive ? '−' : '+'}
+                        </span>
+                      </div>
+
+                      {/* Featured Thumbnail */}
+                      <div className="work-project-card__thumb">
+                        <img
+                          src={imageSrc}
+                          alt={titleText}
+                          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+                      </div>
+
+                      {/* Body Column */}
+                      <div className="work-project-card__body">
+                        {/* Badges */}
+                        <div className="work-project-card__badges">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan/40 bg-ink-950/85 px-2.5 py-0.5 font-mono text-[11px] font-medium text-cyan backdrop-blur-md">
+                            <span className="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse" />
+                            {badgeText}
+                          </span>
+                          <span className="inline-flex items-center rounded-lg border border-white/10 bg-ink-800/80 px-2.5 py-0.5 text-[11px] font-medium text-text-muted">
+                            {metricText}
+                          </span>
+                        </div>
+
+                        {/* Single Unified Title */}
+                        <h3 className="work-project-card__title">
+                          {titleText}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="work-project-card__desc">
+                          {descText}
+                        </p>
+
+                        {/* Tech Tags */}
+                        <div className="work-project-card__tags">
+                          {project.tags.slice(0, 4).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-md border border-ink-700/80 bg-ink-800/80 px-2 py-0.5 font-mono text-[10px] text-text-muted"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Action Details Button */}
+                        <div className="work-project-card__action">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveProject(project);
+                            }}
+                            className="work-project-card__btn group/btn"
+                          >
+                            <span>{isAr ? 'استعراض تفاصيل المشروع' : 'View Project Details'}</span>
+                            <span className="transition-transform group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1">
+                              {isAr ? '←' : '→'}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Bottom Navigation & Indicator Bar */}
-        <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-ink-700/60 pt-5">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-ink-700/60 pt-5">
           {/* Dot Indicators */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div className="hidden md:flex items-center gap-2 py-1">
             {filteredProjects.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => scrollToIndex(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                onClick={() => activate(idx, true)}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   activeIndex === idx
-                    ? 'w-8 bg-cyan shadow-glow'
-                    : 'w-2 bg-ink-600 hover:bg-text-muted'
+                    ? 'w-8 bg-cyan shadow-glow scale-105'
+                    : 'w-2.5 bg-white/20 hover:bg-white/50'
                 }`}
                 aria-label={`Go to project slide ${idx + 1}`}
               />
@@ -435,7 +608,7 @@ export default function WorksSection() {
           </div>
 
           {/* Navigation Arrows & Counter */}
-          <div className="flex items-center gap-3 ms-auto">
+          <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
             <span className="font-mono text-xs text-text-dim">
               <span className="text-cyan font-bold text-sm">
                 {String(activeIndex + 1).padStart(2, '0')}
@@ -446,20 +619,20 @@ export default function WorksSection() {
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handleScroll('prev')}
+                onClick={() => go(-1)}
                 disabled={activeIndex === 0}
-                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-ink-950 hover:shadow-glow disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
                 aria-label={isAr ? 'السابق' : 'Previous'}
               >
-                <span className="text-base font-bold">{isAr ? '→' : '←'}</span>
+                <span className="text-base font-bold">{isAr ? '›' : '‹'}</span>
               </button>
               <button
-                onClick={() => handleScroll('next')}
+                onClick={() => go(1)}
                 disabled={activeIndex === filteredProjects.length - 1}
-                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan/10 hover:text-cyan disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink-600 bg-ink-900/80 text-text transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-ink-950 hover:shadow-glow disabled:opacity-30 disabled:cursor-not-allowed shadow-md cursor-pointer"
                 aria-label={isAr ? 'التالي' : 'Next'}
               >
-                <span className="text-base font-bold">{isAr ? '←' : '→'}</span>
+                <span className="text-base font-bold">{isAr ? '‹' : '›'}</span>
               </button>
             </div>
           </div>
