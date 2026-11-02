@@ -12,9 +12,9 @@ export default function BrandSwitcher({ onClick }: BrandSwitcherProps) {
   const timerRef = useRef<number | null>(null);
   const safetyRef = useRef<number | null>(null);
 
-  // Alternates between Name view and Video Logo/Icon view:
-  // Name displays for ~3.5s -> transitions to Video Icon -> Video plays to end (approx 10s) ->
-  // brief pause -> transitions back to Name for ~3.5s -> repeats.
+  // Alternates between Name view and Frameless 3D Character view:
+  // Name displays for ~3.5s -> transitions to Character (video) -> plays waving animation to end ->
+  // brief pause -> transitions back to Name for ~3.5s -> repeats continuously.
   useEffect(() => {
     if (!showVideo) {
       if (safetyRef.current) clearTimeout(safetyRef.current);
@@ -56,14 +56,14 @@ export default function BrandSwitcher({ onClick }: BrandSwitcherProps) {
     <a
       href="#hero"
       onClick={onClick}
-      className="group relative flex h-9 sm:h-10 items-center select-none"
+      className="group relative flex h-11 sm:h-13 items-center select-none"
       title={lang === 'ar' ? 'محمد علاء — المطور والمصمم' : 'Mohamed Alaa — Developer & Designer'}
     >
-      {/* 1. Name View - exact height and typography */}
+      {/* 1. Name View */}
       <div
-        className={`flex items-center transition-all duration-400 ease-out ${
+        className={`flex items-center transition-all duration-500 ease-out ${
           showVideo
-            ? 'pointer-events-none scale-75 opacity-0 -translate-y-1.5 absolute start-0'
+            ? 'pointer-events-none scale-90 opacity-0 -translate-y-1 absolute start-0'
             : 'scale-100 opacity-100 translate-y-0 relative'
         }`}
       >
@@ -73,15 +73,15 @@ export default function BrandSwitcher({ onClick }: BrandSwitcherProps) {
         </span>
       </div>
 
-      {/* 2. Video View - exact icon/logo size matching the word height */}
+      {/* 2. Seamless 3D Character View - frameless, natural blend (no circle, no border) */}
       <div
-        className={`flex items-center transition-all duration-400 ease-out ${
+        className={`flex items-center transition-all duration-500 ease-out ${
           showVideo
             ? 'scale-100 opacity-100 translate-y-0 relative'
-            : 'pointer-events-none scale-75 opacity-0 translate-y-1.5 absolute start-0'
+            : 'pointer-events-none scale-90 opacity-0 translate-y-1 absolute start-0'
         }`}
       >
-        <div className="relative h-7 w-7 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-full border border-cyan/50 bg-ink-950 shadow-[0_0_12px_-2px_rgba(94,235,255,0.4)] ring-1 ring-cyan/30 transition-transform duration-300 group-hover:scale-110">
+        <div className="relative h-11 sm:h-13 w-auto flex items-center justify-center overflow-visible">
           <video
             ref={videoRef}
             src={`${import.meta.env.BASE_URL}brand-video.mp4`}
@@ -89,13 +89,8 @@ export default function BrandSwitcher({ onClick }: BrandSwitcherProps) {
             playsInline
             preload="auto"
             onEnded={handleVideoEnded}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-auto max-w-[95px] sm:max-w-[120px] object-contain object-center mix-blend-screen [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)] pointer-events-none select-none transition-transform duration-300 group-hover:scale-105"
           />
-          {/* Subtle live indicator pulse */}
-          <span className="absolute top-0 end-0 flex h-1.5 w-1.5 pointer-events-none">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan" />
-          </span>
         </div>
       </div>
     </a>

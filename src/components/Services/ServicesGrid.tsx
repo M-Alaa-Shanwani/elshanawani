@@ -63,7 +63,7 @@ export default function ServicesGrid() {
           glow="cyan"
           duration={3.6}
           delay={0.1}
-          className="absolute -top-10 hidden lg:block lg:end-[5%] lg:w-36 xl:end-[9%] xl:w-44"
+          className="absolute -top-5 xs:-top-7 sm:-top-8 end-1 sm:end-6 lg:end-[5%] w-10 xs:w-12 sm:w-24 lg:w-36 xl:w-44"
         />
 
         {/* Section Header */}

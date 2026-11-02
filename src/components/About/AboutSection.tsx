@@ -41,12 +41,23 @@ export default function AboutSection() {
           <div className="sm:col-span-7">
             {/* Mobile Header with Side-by-Side Photo (below sm: 640px) */}
             <div className="flex sm:hidden items-center gap-3.5 xs:gap-4 mb-5">
-              <div className="relative w-24 xs:w-28 shrink-0 overflow-hidden rounded-2xl shadow-xl border border-ink-700/50 aspect-[3/4]">
-                <img
-                  src={`${import.meta.env.BASE_URL}about-me.jpg`}
-                  alt="Mohamed Alaa"
-                  loading="lazy"
-                  className="h-full w-full object-cover object-center"
+              <div className="relative w-24 xs:w-28 shrink-0">
+                <div className="relative w-full overflow-hidden rounded-2xl shadow-xl border border-ink-700/50 aspect-[3/4]">
+                  <img
+                    src={`${import.meta.env.BASE_URL}about-me.jpg`}
+                    alt="Mohamed Alaa"
+                    loading="lazy"
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+                {/* 3D profile badge on mobile */}
+                <Floating3D
+                  src="user.png"
+                  side="start"
+                  glow="cyan"
+                  duration={3.8}
+                  delay={0.2}
+                  className="absolute -bottom-3 -start-3 z-20 w-12 xs:w-14"
                 />
               </div>
               <div className="min-w-0 flex-1">

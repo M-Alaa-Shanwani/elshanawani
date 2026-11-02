@@ -114,7 +114,7 @@ export default function DemoSection() {
           glow="violet"
           duration={3.4}
           delay={0.3}
-          className="absolute -top-6 hidden lg:block lg:end-[4%] lg:w-44 xl:end-[8%] xl:w-56"
+          className="absolute -top-4 xs:-top-6 sm:-top-6 end-1 sm:end-6 lg:end-[4%] w-10 xs:w-12 sm:w-24 lg:w-44 xl:w-56"
         />
 
         {/* Header */}
