@@ -12,6 +12,7 @@ import WorksSection from '@/components/Work/WorksSection';
 import ProcessSection from '@/components/Process/ProcessSection';
 import CTASection from '@/components/CTA/CTASection';
 import WhatsAppFloat from '@/components/layout/WhatsAppFloat';
+import SwarmConstructionOverlay from '@/components/SwarmConstruction/SwarmConstructionOverlay';
 
 function AppContent() {
   const { dir, lang } = useTranslation();
@@ -32,6 +33,7 @@ function AppContent() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <SwarmConstructionOverlay />
     </div>
   );
 }
