@@ -2,14 +2,15 @@ import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useTranslation } from '@/i18n';
 import Floating3D from '@/components/layout/Floating3D';
+import { CONTACT_CONFIG } from '@/config/contact';
 
 export default function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
   const { t, lang } = useTranslation();
 
   const whatsappUrl = lang === 'ar'
-    ? "https://wa.me/201093299050?text=" + encodeURIComponent("مرحباً محمد، أنا مهتم بمناقشة مشروع معك.")
-    : "https://wa.me/201093299050?text=" + encodeURIComponent("Hi Mohamed, I am interested in discussing a project with you.");
+    ? `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=` + encodeURIComponent("مرحباً محمد، أنا مهتم بمناقشة مشروع معك.")
+    : `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=` + encodeURIComponent("Hi Mohamed, I am interested in discussing a project with you.");
 
   useEffect(() => {
     if (!ref.current) return;

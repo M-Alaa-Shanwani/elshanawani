@@ -1,4 +1,5 @@
 import { useTranslation } from '@/i18n';
+import { CONTACT_CONFIG } from '@/config/contact';
 
 export default function WhatsAppFloat() {
     const { lang } = useTranslation();
@@ -7,7 +8,7 @@ export default function WhatsAppFloat() {
         ? encodeURIComponent("مرحباً محمد، أنا مهتم بمناقشة مشروع معك.")
         : encodeURIComponent("Hi Mohamed, I am interested in discussing a project with you.");
 
-    const whatsappUrl = `https://wa.me/201093299050?text=${message}`;
+    const whatsappUrl = `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=${message}`;
     const tooltipText = lang === 'ar' ? 'تواصل عبر واتس اب' : 'Chat on WhatsApp';
 
     return (
